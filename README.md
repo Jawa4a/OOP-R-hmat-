@@ -8,3 +8,4 @@ Like Comment Share<br>
 Privacy Settings<br>
 Messaging system<br>
 
+Authors: Toomas Herodes, Jaakob-Jaan Avvo,
