@@ -1,11 +1,12 @@
 # SOCIAL NETWORKING APP
 
-User registration<br>
-News Feed<br>
-Post Uploading<br>
-Social Connection<br>
-Like Comment Share<br>
-Privacy Settings<br>
-Messaging system<br>
+## Main features
+* User registration
+* News Feed
+* Post Uploading
+* Social Connection
+* Like Comment Share
+* Privacy Settings
+* Messaging system
 
-Authors: Toomas Herodes, Jaakob-Jaan Avvo, Robin Murumets,
+**Authors: Toomas Herodes, Jaakob-Jaan Avvo, Robin Murumets.**
