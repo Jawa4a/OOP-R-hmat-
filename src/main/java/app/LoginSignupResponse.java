@@ -1,6 +1,6 @@
 package app;
 
-public class LoginResponse {
+public class LoginSignupResponse {
     String kind;
     String localId;
     String email;
