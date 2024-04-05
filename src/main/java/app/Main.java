@@ -114,5 +114,29 @@ public class Main {
         // tuleb teha loogika, mis tervitab kasutajat, annab valiku teha uus konto või logida sisse olemasolevaga, kutsub vastava meetodi jne jne
        // LoginSignupResponse userInfo = signup();
        // LoginSignupResponse userInfo = logIn();
+
+        System.out.println("Tere, kui soovite luua uus konto, siis vajutage (1), Kui konto on juba olemas, siis Logige sisse (2)");
+
+        String LoginOrSignUp = scanner.nextLine();
+
+        LoginSignupResponse kasutajaInfo = null;
+
+        if (LoginOrSignUp.equals("1")) {
+            kasutajaInfo = signup();
+
+        } else if (LoginOrSignUp.equals("2")) {
+            kasutajaInfo = logIn();
+        } else {
+            System.out.println("Valik ei olnud korrektne");
+            return;
+        }
+
+        if (kasutajaInfo != null) {
+            System.out.println("Toiming õnnestus\n" + "Kasutajanimi: " + kasutajaInfo.getDisplayName() + "Kasutaja e-mail: " + kasutajaInfo.getEmail());
+        } else{
+            System.out.println("Toiming ebaõnnestus!");
+        }
+        
+
     }
 }
