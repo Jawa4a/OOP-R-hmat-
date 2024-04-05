@@ -30,7 +30,7 @@ public class ConnectToCloud {
         this.db = FirestoreClient.getFirestore();
     }
     public void writePost(String title, String message, String author) throws ExecutionException, InterruptedException {
-        DocumentReference docRef = db.collection("posts").document(title);
+        DocumentReference docRef = this.db.collection("posts").document(title);
         Map<String, Object> data = new HashMap<>();
         data.put("author", author);
         data.put("title", title);
@@ -39,7 +39,7 @@ public class ConnectToCloud {
         ApiFuture<WriteResult> result = docRef.set(data);
     }
     public void readPost() throws ExecutionException, InterruptedException {
-        ApiFuture<QuerySnapshot> query = db.collection("posts").get();
+        ApiFuture<QuerySnapshot> query = this.db.collection("posts").get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
         if (!documents.isEmpty())
