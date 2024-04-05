@@ -6,12 +6,14 @@ import java.util.Scanner;
 
 
 public class Main {
+    private static String userName;
     private static Scanner scanner = new Scanner(System.in);
     public static void app() throws ExecutionException, InterruptedException, IOException {
         System.out.println("\nViimased postitused:");
         ConnectToCloud database = new ConnectToCloud();
         database.connectToDatabase();
         database.readPost();
+//        database.writePost("Title", "Message", userName);
         /*
         SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
         SLF4J: Defaulting to no-operation (NOP) logger implementation
@@ -34,6 +36,7 @@ public class Main {
         else
         {
             LoginSignupResponse userInfo = seanss.logIn();
+            userName = userInfo.displayName;
             if (userInfo!=null)
             {
                 app();
