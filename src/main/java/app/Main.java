@@ -12,17 +12,16 @@ public class Main {
         System.out.println("\nViimased postitused:");
         ConnectToCloud database = new ConnectToCloud();
         database.connectToDatabase();
-        database.readPost();
-//        database.writePost("Title", "Message", userName);
         /*
-        SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-        SLF4J: Defaulting to no-operation (NOP) logger implementation
-        SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-        */
+        ConnectToCloud database = new ConnectToCloud();
+        database.connectToDatabase();
+        database.readPost();
+
         while (true){
             String input = scanner.nextLine();
-
         }
+        */
+
     }
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
