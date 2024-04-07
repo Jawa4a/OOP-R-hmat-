@@ -24,8 +24,8 @@ public class Main {
             if (userInfo!=null)
             {
                 System.out.println("\nViimased postitused:");
-                ConnectToCloud database = new ConnectToCloud();
-                database.connectToDatabase();
+                Activity activity = new Activity();
+                activity.showPosts(0);
             }
         }
 
