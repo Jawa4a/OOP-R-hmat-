@@ -71,8 +71,8 @@ public class Activity {
         }
     }
     public void writePost() throws IOException {
-        System.out.println("Uue postituse lisamine");
-        System.out.println("Sisesta postituse sisu: ");
+        System.out.println("Adding a new post");
+        System.out.println("Post content: ");
         Scanner scanner = new Scanner(System.in);
         String postContent = scanner.nextLine();
 
@@ -81,15 +81,15 @@ public class Activity {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
 
-            String requestBody = "{ \"fields\": { \"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + ".\",  } } }";
+            String requestBody = "{ \"fields\": {\"author\": { \"stringValue\": \"Ajutine Hardcoded Kasutaja\" },  \"likes\": { \"integerValue\": \"0\" },\"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + ".\",  } } }";
 
         try (OutputStream outputStream = connection.getOutputStream()) {
-            byte[] input = requestBody.getBytes("utf-8");
+            byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
             outputStream.write(input, 0, input.length);
         }
 
         // Vajadusel debugimiseks response
-        /*
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
         StringBuilder response = new StringBuilder();
         String line;
@@ -98,7 +98,7 @@ public class Activity {
         }
 
         System.out.println(response);
-           */
+
     }
 
     public void readPost() throws ExecutionException, InterruptedException {
