@@ -51,11 +51,39 @@ public class Main {
 
         if (kasutajaInfo!=null)
         {
-            System.out.println("\nViimased postitused:");
             Activity activity = new Activity();
-            activity.loadPosts();
-            activity.showPosts(0);
-            activity.CommandHandler(activity);
+            String emailKasutajanimi = kasutajaInfo.getEmail().split("@")[0];
+
+            
+
+
+            System.out.println("Valige tegevus:");
+            System.out.println("0. Exit");
+            System.out.println("1. Loo postitus");
+            System.out.println("2. Näita postitusi");
+            
+            int tegevus = scanner.nextInt();
+
+            switch (tegevus) {
+                case 0:
+                    System.out.println("Väljumine...");
+                    return;
+                case 1:
+                    activity.writePost(emailKasutajanimi);
+                    break;
+                case 2:
+                    System.out.println("\nViimased postitused:");
+                    activity.loadPosts();
+                    activity.showPosts(0);
+                    activity.CommandHandler(activity);
+                    break;
+                default:
+                    System.out.println("Tundmatu tegevus");
+                    break;
+                
+            }
+
+            
         }
     }
 }

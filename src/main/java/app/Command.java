@@ -38,12 +38,14 @@ class PrevCommand implements Command {
 // Postita
 class PostCommand implements Command {
     Activity activity;
+
     public PostCommand(Activity activity) {
         this.activity = activity;
     }
     @Override
     public void execute(String[] args) throws IOException {
-        activity.writePost();
+        String autor = activity.getautor();
+        activity.writePost(autor);
     }
 }
 // Lisab like.

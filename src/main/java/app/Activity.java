@@ -14,9 +14,22 @@ import java.util.concurrent.ExecutionException;
 
 
 public class Activity {
+
     int algus;
     int lopp;
     Post[] posts;
+
+    private String autor;
+
+
+
+    public void setautor(String autor) {
+        this.autor = autor;
+    }
+
+    public String getautor() {
+        return this.autor;
+    }
 
     public Activity() throws IOException {
         this.algus = 0;
@@ -70,35 +83,35 @@ public class Activity {
             System.out.println("\n" + post.getFields().toString());
         }
     }
-    public void writePost() throws IOException {
+    public void writePost(String autor) throws IOException {
         System.out.println("Adding a new post");
         System.out.println("Post content: ");
         Scanner scanner = new Scanner(System.in);
         String postContent = scanner.nextLine();
-
-        HttpURLConnection connection = new ConnectToCloud().connectToDatabase();;
+    
+        HttpURLConnection connection = new ConnectToCloud().connectToDatabase();
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
-
-            String requestBody = "{ \"fields\": {\"author\": { \"stringValue\": \"Ajutine Hardcoded Kasutaja\" },  \"likes\": { \"integerValue\": \"0\" },\"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + ".\",  } } }";
-
+    
+        String requestBody = "{ \"fields\": {\"author\": { \"stringValue\": \"" + autor + "\" },  \"likes\": { \"integerValue\": \"0\" },\"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + ".\",  } } }";
+    
         try (OutputStream outputStream = connection.getOutputStream()) {
             byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
             outputStream.write(input, 0, input.length);
         }
-
-        // Vajadusel debugimiseks response
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+    
+        // Debugging response
+        /*
+         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
         StringBuilder response = new StringBuilder();
         String line;
         while((line = reader.readLine()) != null){
             response.append(line);
         }
-
         System.out.println(response);
-
+        */
+        
     }
 
     public void readPost() throws ExecutionException, InterruptedException {
