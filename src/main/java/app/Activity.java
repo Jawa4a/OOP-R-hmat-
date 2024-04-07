@@ -28,14 +28,12 @@ public class Activity {
         ObjectMapper mapper = new ObjectMapper();
 
         Response response = mapper.readValue(reader, Response.class);
-        Post post;
-        for (int i = algus+nihe; i < lopp+nihe; i++) {
-             post = response.getPosts()[i];
-            System.out.println(post);
+        Post[] posts = response.getPosts();
+        Arrays.sort(posts, (Post p1, Post p2) -> p1.getFields().getTime().compareTo(p2.getFields().getTime()));
+        for (int i = algus; i < lopp; i++) {
+            Post post = posts[i];
+            System.out.println("\n" + post.getFields().toString());
         }
-//        for(Post post: response.getPosts()){
-//            System.out.println(post);
-//        }
     }
     public void writePost(String title, String message, String author) {
     }
