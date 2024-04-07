@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +21,10 @@ public class Activity {
     private String autor;
 
 
+    public Activity() throws IOException {
+        this.algus = 0;
+        this.lopp = 1;
+    }
 
     public void setautor(String autor) {
         this.autor = autor;
@@ -31,10 +34,6 @@ public class Activity {
         return this.autor;
     }
 
-    public Activity() throws IOException {
-        this.algus = 0;
-        this.lopp = 1;
-    }
     public void CommandHandler(Activity activity) throws IOException {
         Scanner scanner = new Scanner(System.in);
         Map<String, Command> commands = new HashMap<>();
@@ -63,8 +62,10 @@ public class Activity {
             }
         }
     }
+
     public void loadPosts() throws IOException {
-        HttpURLConnection connection = new ConnectToCloud().connectToDatabase();;
+        HttpURLConnection connection = new ConnectToCloud().connectToDatabase();
+        ;
         connection.setRequestMethod("GET");
         InputStream inputStream = connection.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -75,6 +76,7 @@ public class Activity {
         Arrays.sort(posts, (Post p1, Post p2) -> p1.getFields().getTime().compareTo(p2.getFields().getTime()));
 
     }
+
     public void showPosts(int nihe) throws IOException {
         algus += nihe;
         lopp += nihe;
@@ -83,35 +85,34 @@ public class Activity {
             System.out.println("\n" + post.getFields().toString());
         }
     }
+
     public void writePost(String autor) throws IOException {
         System.out.println("Adding a new post");
         System.out.println("Post content: ");
         Scanner scanner = new Scanner(System.in);
         String postContent = scanner.nextLine();
-    
+
         HttpURLConnection connection = new ConnectToCloud().connectToDatabase();
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
-    
-        String requestBody = "{ \"fields\": {\"author\": { \"stringValue\": \"" + autor + "\" },  \"likes\": { \"integerValue\": \"0\" },\"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + ".\",  } } }";
-    
+
+        String requestBody = "{ \"fields\": {\"author\": { \"stringValue\": \"" + autor + "\" },  \"likes\": { \"integerValue\": \"0\" },\"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + "\",  } } }";
+
         try (OutputStream outputStream = connection.getOutputStream()) {
             byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
             outputStream.write(input, 0, input.length);
         }
-    
+
         // Debugging response
-        /*
-         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
         StringBuilder response = new StringBuilder();
         String line;
-        while((line = reader.readLine()) != null){
+        while ((line = reader.readLine()) != null) {
             response.append(line);
         }
-        System.out.println(response);
-        */
-        
+
+
     }
 
     public void readPost() throws ExecutionException, InterruptedException {
