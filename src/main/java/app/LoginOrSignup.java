@@ -110,16 +110,16 @@ public class LoginOrSignup {
 
     }
 
-    public boolean signOrRegister(){
+    public LoginSignupResponse signOrRegister() throws IOException {
         System.out.println("Kas soovite luua uus konto(sisestage 'register') või  sisse logida olemasolevasse kontosse?");
         String choice = scanner.nextLine();
         if (choice.equals("register"))
         {
-            return true;
+            return signup();
         }
         else
         {
-            return false;
+            return logIn();
         }
     }
 }

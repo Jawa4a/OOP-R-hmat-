@@ -10,6 +10,8 @@ class Post {
     @JsonProperty("updateTime")
     private String updateTime;
 
+
+
     public String getName() {
         return name;
     }
@@ -28,8 +30,7 @@ class Post {
 
     @Override
     public String toString() {
-        return "Post{" +
-                "name='" + name + '\'' +
+        return name + "\n" +
                 ", fields=" + fields +
                 ", createTime='" + createTime + '\'' +
                 ", updateTime='" + updateTime + '\'' +
