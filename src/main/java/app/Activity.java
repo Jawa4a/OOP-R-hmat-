@@ -18,10 +18,12 @@ public class Activity {
     public Activity() throws IOException {
         this.connection = new ConnectToCloud().connectToDatabase();
         this.algus = 0;
-        this.lopp = 2;
+        this.lopp = 10;
     }
 
     public void showPosts(int nihe) throws IOException {
+        algus += nihe;
+        lopp += nihe;
         connection.setRequestMethod("GET");
         InputStream inputStream = connection.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
