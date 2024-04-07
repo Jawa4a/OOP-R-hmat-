@@ -45,11 +45,4 @@ public class ConnectToCloud {
     public void readPost() throws ExecutionException, InterruptedException {
     }
 
-
-
-
-
-
-
-
 }
