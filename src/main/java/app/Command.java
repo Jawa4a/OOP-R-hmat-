@@ -1,6 +1,7 @@
 package app;
 
 import java.io.IOException;
+import java.net.ProtocolException;
 
 interface Command {
     void execute(String[] args) throws IOException;
@@ -41,12 +42,8 @@ class PostCommand implements Command {
         this.activity = activity;
     }
     @Override
-    public void execute(String[] args) {
-        if (args.length > 1) {
-            activity.writePost(String.join(" ", args));
-        } else {
-            System.out.println("Command usage: 'post <your message>'");
-        }
+    public void execute(String[] args) throws IOException {
+        activity.writePost();
     }
 }
 // Lisab like.

@@ -22,11 +22,6 @@ public class ConnectToCloud {
         String projectId = "obje-8d9a1";
         String apiFetchUrl = "https://firestore.googleapis.com/v1/projects/" + projectId + "/databases/(default)/documents/posts";
 
-        HttpURLConnection connection = (HttpURLConnection) new URL(apiFetchUrl).openConnection();
-
-        return connection;
+        return (HttpURLConnection) new URL(apiFetchUrl).openConnection();
     }
-
-
-
 }

@@ -2,12 +2,9 @@ package app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,14 +12,13 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
+
 public class Activity {
-    HttpURLConnection connection;
     int algus;
     int lopp;
     Post[] posts;
 
     public Activity() throws IOException {
-        this.connection = new ConnectToCloud().connectToDatabase();
         this.algus = 0;
         this.lopp = 1;
     }
@@ -35,6 +31,7 @@ public class Activity {
         commands.put("next", new NextCommand(activity));
         commands.put("prev", new PrevCommand(activity));
         commands.put("like", new LikeCommand(activity));
+        commands.put("post", new PostCommand(activity));
 
 
         while (true) {
@@ -54,6 +51,7 @@ public class Activity {
         }
     }
     public void loadPosts() throws IOException {
+        HttpURLConnection connection = new ConnectToCloud().connectToDatabase();;
         connection.setRequestMethod("GET");
         InputStream inputStream = connection.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -72,7 +70,35 @@ public class Activity {
             System.out.println("\n" + post.getFields().toString());
         }
     }
-    public void writePost(String message) {
+    public void writePost() throws IOException {
+        System.out.println("Uue postituse lisamine");
+        System.out.println("Sisesta postituse sisu: ");
+        Scanner scanner = new Scanner(System.in);
+        String postContent = scanner.nextLine();
+
+        HttpURLConnection connection = new ConnectToCloud().connectToDatabase();;
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json");
+
+            String requestBody = "{ \"fields\": { \"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + ".\",  } } }";
+
+        try (OutputStream outputStream = connection.getOutputStream()) {
+            byte[] input = requestBody.getBytes("utf-8");
+            outputStream.write(input, 0, input.length);
+        }
+
+        // Vajadusel debugimiseks response
+        /*
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while((line = reader.readLine()) != null){
+            response.append(line);
+        }
+
+        System.out.println(response);
+           */
     }
 
     public void readPost() throws ExecutionException, InterruptedException {
