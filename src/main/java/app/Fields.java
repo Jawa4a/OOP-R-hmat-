@@ -42,12 +42,16 @@ class Fields {
         }
     }
 
-    static class Time {
+    static class Time implements Comparable<Time>{
         @JsonProperty("timestampValue")
         private String stringValue;
 
         public String getStringValue() {
             return stringValue;
+        }
+        @Override
+        public int compareTo(Time o) {
+            return o.stringValue.compareTo(this.stringValue);
         }
     }
 
