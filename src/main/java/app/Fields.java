@@ -66,11 +66,8 @@ class Fields {
 
     @Override
     public String toString() {
-        return "Fields{" +
-                "content=" + content.getStringValue() +
-                ", author=" + author.getStringValue() +
-                ", time=" + time.getStringValue() +
-                ", likes=" + likes.getIntegerValue() +
-                '}';
+        return author.getStringValue() + " " + time.getStringValue()
+                + "\n" + content.getStringValue() + "\n"
+                + likes.getIntegerValue() + " Likes";
     }
 }
