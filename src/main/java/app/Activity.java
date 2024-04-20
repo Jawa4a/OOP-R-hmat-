@@ -65,7 +65,6 @@ public class Activity {
 
     public void loadPosts() throws IOException {
         HttpURLConnection connection = new ConnectToCloud().connectToDatabase();
-        ;
         connection.setRequestMethod("GET");
         InputStream inputStream = connection.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -85,6 +84,42 @@ public class Activity {
             System.out.println("\n" + post.getFields().toString());
         }
     }
+
+    public int getPostNumber(){
+        return algus;
+    }
+
+    public void likePost(int postNumber) throws IOException {
+        Post curPost = posts[postNumber];
+        String postPath = curPost.getName();
+        int currentLikes = curPost.getFields().getLikes().getIntegerValue();
+        curPost.addLike();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String currentPostFields = objectMapper.writeValueAsString(curPost.getFields());
+        String requestBody = "{\"fields\": "+ currentPostFields +" }";
+        HttpURLConnection connection = new LikePostConnection().connectToDatabase(postPath);
+
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setDoOutput(true);
+        OutputStream os = connection.getOutputStream();
+        os.write(requestBody.getBytes());
+        os.flush();
+        os.close();
+
+        int responseCode = connection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            System.out.println("Post liked");
+        } else {
+            System.out.println("Post not liked: " + responseCode);
+        }
+
+        connection.disconnect();
+
+    }
+
+
 
     public void writePost(String autor) throws IOException {
         System.out.println("Adding a new post");

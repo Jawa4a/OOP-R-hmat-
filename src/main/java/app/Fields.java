@@ -24,6 +24,10 @@ class Fields {
         return likes;
     }
 
+    public void addLike() {
+        this.likes.addLike();
+    }
+
     static class Content {
         @JsonProperty("stringValue")
         private String stringValue;
@@ -61,6 +65,10 @@ class Fields {
 
         public int getIntegerValue() {
             return integerValue;
+        }
+
+        public void addLike() {
+            integerValue += 1;
         }
     }
 

@@ -56,11 +56,9 @@ class LikeCommand implements Command {
     }
 
     @Override
-    public void execute(String[] args) {
-        if (args.length > 1) {
+    public void execute(String[] args) throws IOException {
+        int postNumber = this.activity.getPostNumber();
+            this.activity.likePost(postNumber);
 
-        } else {
-            System.out.println("Command usage: 'like <post number>'");
-        }
     }
 }

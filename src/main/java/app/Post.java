@@ -28,6 +28,10 @@ class Post {
         return updateTime;
     }
 
+    public void addLike() {
+        this.fields.addLike();
+    }
+
     @Override
     public String toString() {
         return name + "\n" +
