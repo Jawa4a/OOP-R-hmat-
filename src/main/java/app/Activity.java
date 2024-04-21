@@ -72,7 +72,7 @@ public class Activity {
 
         Response response = mapper.readValue(reader, Response.class);
         this.posts = response.getPosts();
-        Arrays.sort(posts, (Post p1, Post p2) -> p1.getFields().getTime().compareTo(p2.getFields().getTime()));
+        Arrays.sort(posts, (Post p1, Post p2) -> p2.getCreateTime().compareTo(p1.getCreateTime()));
 
     }
 
