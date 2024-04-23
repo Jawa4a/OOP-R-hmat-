@@ -34,7 +34,7 @@ public class Activity {
         return this.autor;
     }
 
-    public void CommandHandler(Activity activity) throws IOException {
+    public void CommandHandler(Activity activity, LoginSignupResponse userInfo) throws IOException {
         Scanner scanner = new Scanner(System.in);
         Map<String, Command> commands = new HashMap<>();
 
@@ -42,7 +42,7 @@ public class Activity {
         commands.put("help", new HelpCommand());
         commands.put("next", new NextCommand(activity));
         commands.put("prev", new PrevCommand(activity));
-        commands.put("like", new LikeCommand(activity));
+        commands.put("like", new LikeCommand(activity, userInfo));
         commands.put("post", new PostCommand(activity));
 
 
@@ -81,6 +81,7 @@ public class Activity {
         lopp += nihe;
         for (int i = algus; i < lopp; i++) {
             Post post = posts[i];
+            System.out.println("");
             System.out.println("\n" + post.getFields().toString());
         }
     }
@@ -89,10 +90,9 @@ public class Activity {
         return algus;
     }
 
-    public void likePost(int postNumber) throws IOException {
+    public void likePost(int postNumber, LoginSignupResponse userInfo) throws IOException {
         Post curPost = posts[postNumber];
         String postPath = curPost.getName();
-        int currentLikes = curPost.getFields().getLikes().getIntegerValue();
         curPost.addLike();
         ObjectMapper objectMapper = new ObjectMapper();
         String currentPostFields = objectMapper.writeValueAsString(curPost.getFields());
@@ -110,7 +110,8 @@ public class Activity {
 
         int responseCode = connection.getResponseCode();
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            System.out.println("Post liked");
+            System.out.println("Post liked by " + userInfo.email);
+            System.out.println();
         } else {
             System.out.println("Post not liked: " + responseCode);
         }

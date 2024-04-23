@@ -51,14 +51,16 @@ class PostCommand implements Command {
 // Lisab like.
 class LikeCommand implements Command {
     Activity activity;
-    public LikeCommand(Activity activity) {
+    LoginSignupResponse userInfo;
+    public LikeCommand(Activity activity, LoginSignupResponse userInfo) {
         this.activity = activity;
+        this.userInfo = userInfo;
     }
 
     @Override
     public void execute(String[] args) throws IOException {
         int postNumber = this.activity.getPostNumber();
-            this.activity.likePost(postNumber);
+            this.activity.likePost(postNumber, userInfo);
 
     }
 }

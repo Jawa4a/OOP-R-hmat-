@@ -53,7 +53,6 @@ public class Main {
         {
             Activity activity = new Activity();
             String emailKasutajanimi = kasutajaInfo.getEmail().split("@")[0];
-
             
 
 
@@ -75,7 +74,7 @@ public class Main {
                     System.out.println("\nViimased postitused:");
                     activity.loadPosts();
                     activity.showPosts(0);
-                    activity.CommandHandler(activity);
+                    activity.CommandHandler(activity, kasutajaInfo);
                     break;
                 default:
                     System.out.println("Tundmatu tegevus");

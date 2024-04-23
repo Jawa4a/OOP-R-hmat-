@@ -72,10 +72,11 @@ class Fields {
         }
     }
 
+
     @Override
     public String toString() {
-        return author.getStringValue() + " " + time.getStringValue()
-                + "\n" + content.getStringValue() + "\n"
+        return author.getStringValue() + "\n" + time.getStringValue()+ "\n"+ "--------------------------"
+                + "\n" + content.getStringValue() + "\n" + "--------------------------" + "\n" +
                 + likes.getIntegerValue() + " Likes";
     }
 }
