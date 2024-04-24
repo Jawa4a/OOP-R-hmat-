@@ -64,7 +64,7 @@ public class Activity {
     }
 
     public void loadPosts() throws IOException {
-        HttpURLConnection connection = new ConnectToCloud().connectToDatabase();
+        HttpURLConnection connection = new ConnectToCloud().connectToDatabase("posts");
         connection.setRequestMethod("GET");
         InputStream inputStream = connection.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -109,8 +109,9 @@ public class Activity {
         os.close();
 
         int responseCode = connection.getResponseCode();
+        UserDbEntry userDbEntry = getUserData(userInfo.email);
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            System.out.println("Post liked by " + userInfo.email);
+            System.out.println("Post liked by " + userInfo.email + "and his bio is ");
             System.out.println();
         } else {
             System.out.println("Post not liked: " + responseCode);
@@ -128,7 +129,7 @@ public class Activity {
         Scanner scanner = new Scanner(System.in);
         String postContent = scanner.nextLine();
 
-        HttpURLConnection connection = new ConnectToCloud().connectToDatabase();
+        HttpURLConnection connection = new ConnectToCloud().connectToDatabase("posts");
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
@@ -149,6 +150,21 @@ public class Activity {
         }
 
 
+    }
+
+    public UserDbEntry getUserData(String userEmail) throws IOException {
+        HttpURLConnection connection = new ConnectToCloud().connectToDatabaseDocument("users", userEmail);
+
+        connection.setRequestMethod("GET");
+        InputStream inputStream = connection.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        ObjectMapper mapper = new ObjectMapper();
+
+        UserDbEntryResponse response = mapper.readValue(reader, UserDbEntryResponse.class);
+
+        UserDbEntry userDbEntry = response.getUserDbEntry();
+        System.out.println(userDbEntry.getFields().);
+        return userDbEntry;
     }
 
     public void readPost() throws ExecutionException, InterruptedException {
