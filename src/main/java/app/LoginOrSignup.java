@@ -92,8 +92,12 @@ public class LoginOrSignup {
             }
             ObjectMapper mapper = new ObjectMapper();
 
+
+
             // API vastus JSON-i
             LoginSignupResponse responseJSON = mapper.readValue(response.toString(), LoginSignupResponse.class);
+
+            createUserDbEntry(email);
 
             System.out.println("Kasutaja loodud!");
             System.out.println("Sisse logitud kui:");
@@ -110,16 +114,17 @@ public class LoginOrSignup {
 
     }
 
-    public LoginSignupResponse signOrRegister() throws IOException {
-        System.out.println("Kas soovite luua uus konto(sisestage 'register') või  sisse logida olemasolevasse kontosse?");
-        String choice = scanner.nextLine();
-        if (choice.equals("register"))
-        {
-            return signup();
-        }
-        else
-        {
-            return logIn();
+    public void createUserDbEntry(String email) throws IOException {
+        HttpURLConnection connection = new ConnectToCloud().connectToDatabaseDocument("users", email);
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json");
+
+        String requestBody = "{ \\\"fields\\\": {\\\"bio\\\": {\\\"stringValue\\\": \\\"\uD83D\uDE0A\\\"}, \\\"likedPosts\\\": {\\\"arrayValue\\\": {\\\"values\\\": []}}} }";
+
+        try (OutputStream outputStream = connection.getOutputStream()) {
+            byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
+            outputStream.write(input, 0, input.length);
         }
     }
 }

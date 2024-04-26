@@ -3,10 +3,10 @@ package app;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserDbEntryResponse {
-    @JsonProperty("users")
-    private UserDbEntry userDbEntry;
+    @JsonProperty("documents")
+    private UserDbEntry[] userDbEntryList;
 
-    public UserDbEntry getUserDbEntry() {
-        return userDbEntry;
+    public UserDbEntry[] getUserDbEntry() {
+        return userDbEntryList;
     }
 }

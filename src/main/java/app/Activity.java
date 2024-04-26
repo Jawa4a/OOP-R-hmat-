@@ -1,6 +1,7 @@
 package app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.util.IOUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -111,8 +112,11 @@ public class Activity {
         int responseCode = connection.getResponseCode();
         UserDbEntry userDbEntry = getUserData(userInfo.email);
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            System.out.println("Post liked by " + userInfo.email + "and his bio is ");
-            System.out.println();
+            if(!userDbEntry.getFields().getLikedPosts().getArrayValue().checkIfPostIsLiked(curPost.getName())){
+                System.out.println("Post liked");
+            } else {
+                System.out.println("You have already liked this post");
+            }
         } else {
             System.out.println("Post not liked: " + responseCode);
         }
@@ -160,11 +164,9 @@ public class Activity {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         ObjectMapper mapper = new ObjectMapper();
 
-        UserDbEntryResponse response = mapper.readValue(reader, UserDbEntryResponse.class);
+        UserDbEntry response = mapper.readValue(reader, UserDbEntry.class);
 
-        UserDbEntry userDbEntry = response.getUserDbEntry();
-        System.out.println(userDbEntry.getFields().);
-        return userDbEntry;
+        return response ;
     }
 
     public void readPost() throws ExecutionException, InterruptedException {

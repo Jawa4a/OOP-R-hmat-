@@ -9,7 +9,7 @@ public class UserDbEntry {
     private String name;
 
     @JsonProperty("fields")
-    private Fields fields;
+    private UserDbEntryFields fields;
 
     @JsonProperty("createTime")
     private String createTime;
@@ -26,11 +26,11 @@ public class UserDbEntry {
         this.name = name;
     }
 
-    public Fields getFields() {
+    public UserDbEntryFields getFields() {
         return fields;
     }
 
-    public void setFields(Fields fields) {
+    public void setFields(UserDbEntryFields fields) {
         this.fields = fields;
     }
 
