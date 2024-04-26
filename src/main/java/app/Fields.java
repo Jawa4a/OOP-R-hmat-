@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 class Fields {
     private Content content;
     private Author author;
+    private Email email;
     private Time time;
     private Likes likes;
 
@@ -22,6 +23,10 @@ class Fields {
 
     public Likes getLikes() {
         return likes;
+    }
+
+    public Email getEmail(){
+        return email;
     }
 
     public void addLike() {
@@ -69,6 +74,15 @@ class Fields {
 
         public void addLike() {
             integerValue += 1;
+        }
+    }
+
+    static class Email {
+        @JsonProperty("stringValue")
+        private String stringValue;
+
+        public String getStringValue() {
+            return stringValue;
         }
     }
 

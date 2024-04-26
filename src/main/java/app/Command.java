@@ -2,6 +2,7 @@ package app;
 
 import java.io.IOException;
 import java.net.ProtocolException;
+import java.util.Arrays;
 
 interface Command {
     void execute(String[] args) throws IOException;
@@ -61,6 +62,21 @@ class LikeCommand implements Command {
     public void execute(String[] args) throws IOException {
         int postNumber = this.activity.getPostNumber();
             this.activity.likePost(postNumber, userInfo);
+    }
+}
 
+class SubscribeCommand implements Command {
+    Activity activity;
+    String currUser;
+    String postAuth;
+    public SubscribeCommand(Activity activity){ // , String postAuth
+        this.activity = activity;
+//        qdoKHKu80KV7OwckUjqNy1RCbzM2 kasutajaInfo.getLocalId()
+    }
+    @Override
+    public void execute(String[] args) throws IOException {
+        int postnr = activity.getPostNumber()+Integer.parseInt(args[1]);
+        activity.subscribeuser(postnr);
+//        this.activity.subscribeuser(currUser, postAuth);
     }
 }
