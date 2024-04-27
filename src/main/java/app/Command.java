@@ -1,8 +1,6 @@
 package app;
 
 import java.io.IOException;
-import java.net.ProtocolException;
-import java.util.Arrays;
 
 interface Command {
     void execute(String[] args) throws IOException;
@@ -11,7 +9,7 @@ interface Command {
 class HelpCommand implements Command {
     @Override
     public void execute(String[] args) {
-        System.out.println("Available commands: next, prev, post, like");
+        System.out.println("Available commands: next, prev, post, like, subscribe, followed");
     }
 }
 // Jargmised postitused.
@@ -69,14 +67,26 @@ class SubscribeCommand implements Command {
     Activity activity;
     String currUser;
     String postAuth;
-    public SubscribeCommand(Activity activity){ // , String postAuth
+    public SubscribeCommand(Activity activity){
         this.activity = activity;
-//        qdoKHKu80KV7OwckUjqNy1RCbzM2 kasutajaInfo.getLocalId()
     }
     @Override
     public void execute(String[] args) throws IOException {
         int postnr = activity.getPostNumber()+Integer.parseInt(args[1]);
         activity.subscribeuser(postnr);
+//        this.activity.subscribeuser(currUser, postAuth);
+    }
+}
+class ShowFollowedCommand implements Command {
+    Activity activity;
+
+    public ShowFollowedCommand(Activity activity) {
+        this.activity = activity;
+    }
+
+    @Override
+    public void execute(String[] args) throws IOException {
+        activity.showFollowed();
 //        this.activity.subscribeuser(currUser, postAuth);
     }
 }

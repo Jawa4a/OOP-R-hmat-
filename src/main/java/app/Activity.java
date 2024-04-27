@@ -1,14 +1,13 @@
 package app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.util.Value;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 
 public class Activity {
@@ -18,18 +17,16 @@ public class Activity {
     public Post[] posts;
     private String autor;
     private LoginSignupResponse userInfo;
-    private ConnectToCloud connectToCloud;
     private String projectID;
-    private String apiKey;
     private UserProfile userProfile;
 
 
-    public Activity() throws IOException {
+    public Activity(LoginSignupResponse userInfo) throws IOException {
         this.algus = 0;
         this.lopp = 1;
-        this.connectToCloud = new ConnectToCloud();
         this.projectID = "obje-8d9a1";
-        this.apiKey = "AIzaSyD73mvB5ln64_naLcGEX1G-gevoIwRLDZ0";
+        this.userInfo = userInfo;
+        this.userProfile = getUserProfileData(userInfo.email);
     }
 
     public void setautor(String autor) {
@@ -41,8 +38,7 @@ public class Activity {
     }
 
     public void CommandHandler(Activity activity, LoginSignupResponse userInfo) throws IOException {
-        this.userInfo=userInfo;
-        this.userProfile = getUserProfileData(userInfo.email);
+//        this.userInfo=userInfo;
         Scanner scanner = new Scanner(System.in);
         Map<String, Command> commands = new HashMap<>();
 
@@ -53,6 +49,7 @@ public class Activity {
         commands.put("like", new LikeCommand(activity, userInfo));
         commands.put("post", new PostCommand(activity));
         commands.put("subscribe", new SubscribeCommand(activity));
+        commands.put("followed", new ShowFollowedCommand(activity));
 
         while (true) {
             System.out.print("> ");
@@ -145,7 +142,7 @@ public class Activity {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
 
-        String requestBody = "{ \"fields\": {\"author\": { \"stringValue\": \"" + autor + "\" }, \"email\": { \"stringValue\": \"" + userInfo.email + "\" },  \"likes\": { \"integerValue\": \"0\" },\"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + "\",  } } }";
+        String requestBody = "{ \"fields\": {\"author\": { \"stringValue\": \"" + autor + "\" }, \"email\": { \"stringValue\": \"" + this.userInfo.email + "\" },  \"likes\": { \"integerValue\": \"0\" },\"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + "\",  } } }";
 
         try (OutputStream outputStream = connection.getOutputStream()) {
             byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
@@ -235,6 +232,25 @@ public class Activity {
 
         return response;
     }
+
+    public void showFollowed() throws IOException {
+        int counter = 0;
+        List<UserInformation.Value> existingValues = userProfile.getUserInformation().getSubscriptions().getArrayValue().getValues();
+        Set<String> setOfValues = new HashSet<>(existingValues.stream().map(UserInformation.Value::getStringValue).collect(Collectors.toSet()));
+        for (int j = 0; j < posts.length; j++) {
+            Post post = posts[j];
+            String postEmail = post.getFields().getEmail().getStringValue();
+            if (!postEmail.isEmpty()) {
+                if (setOfValues.contains(postEmail)) {
+                    System.out.println("");
+                    System.out.println("\n" + post.getFields().toString());
+                    counter++;
+                }
+            }
+        }
+    }
+
+
 
 
 }

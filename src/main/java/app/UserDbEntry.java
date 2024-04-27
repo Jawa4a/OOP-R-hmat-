@@ -2,8 +2,6 @@ package app;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Map;
-
 public class UserDbEntry {
     @JsonProperty("name")
     private String name;

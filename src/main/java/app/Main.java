@@ -9,7 +9,6 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) throws IOException{
-        // tuleb teha loogika, mis tervitab kasutajat, annab valiku teha uus konto või logida sisse olemasolevaga, kutsub vastava meetodi jne jne
 
         System.out.println("Tere tulemast! Kas soovid logida sisse või registreeruda?");
         System.out.println("1. Logi sisse");
@@ -43,15 +42,10 @@ public class Main {
                 System.out.println("Tundmatu valik, palun proovi uuesti.");
                 break;
         }
-        
-
-
-        //LoginOrSignup seanss = new LoginOrSignup();
-        //LoginSignupResponse kasutajaInfo = seanss.signOrRegister();
 
         if (kasutajaInfo!=null)
         {
-            Activity activity = new Activity();
+            Activity activity = new Activity(kasutajaInfo);
             String emailKasutajanimi = kasutajaInfo.getEmail().split("@")[0];
             
 
@@ -79,7 +73,6 @@ public class Main {
                 default:
                     System.out.println("Tundmatu tegevus");
                     break;
-                
             }
 
             

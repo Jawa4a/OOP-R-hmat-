@@ -1,12 +1,11 @@
 package app;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonParser;
 
 import java.util.List;
 
 public class UserInformation {
-    @JsonProperty("Bio")
+    @JsonProperty("bio")
     private Bio bio;
 
     @JsonProperty("likedPosts")
