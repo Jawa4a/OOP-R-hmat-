@@ -295,13 +295,21 @@ public class Activity {
 
     public void showComments(int postNumber) {
         Post post = posts[postNumber]; 
-        List<Comment> comments = post.getComments();
-        if (comments.isEmpty()) {
+        List<Fields.ArrayValue.Value> comments = post.getFields().getComments().getArrayValue().getValues();
+
+        if (comments == null) {
             System.out.println("Puuduvad komentaarid");
         } else {
             System.out.println("Comments:");
-            for (Comment comment : comments) {
-                System.out.println(comment.toString());
+            for (Fields.ArrayValue.Value comment : comments) {
+                System.out.println(comment.getStringValue());
+                String[] commentString = comment.getStringValue().split("×");
+                System.out.println("---------------------------");
+                System.out.println(commentString[0]);
+                System.out.println(commentString[1]);
+                System.out.println();
+                System.out.println(commentString[2]);
+                System.out.println("---------------------------");
             }
         }
     }
