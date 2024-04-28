@@ -9,12 +9,13 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class LoginOrSignup {
     // avalik "key", võib committida
-    private String apiKey = "AIzaSyD73mvB5ln64_naLcGEX1G-gevoIwRLDZ0";
-    private Scanner scanner = new Scanner(System.in);
+    private final String apiKey = "AIzaSyD73mvB5ln64_naLcGEX1G-gevoIwRLDZ0";
+    private final Scanner scanner = new Scanner(System.in);
 
     public LoginSignupResponse logIn() throws IOException {
 
@@ -92,18 +93,18 @@ public class LoginOrSignup {
             }
             ObjectMapper mapper = new ObjectMapper();
 
-
-
             // API vastus JSON-i
             LoginSignupResponse responseJSON = mapper.readValue(response.toString(), LoginSignupResponse.class);
 
-            createUserDbEntry(email);
-
-            System.out.println("Kasutaja loodud!");
-            System.out.println("Sisse logitud kui:");
-            System.out.println(responseJSON.email);
+            if (createUserDbEntry(email)){
+                System.out.println("Kasutaja loodud!");
+                System.out.println("Sisse logitud kui:");
+                System.out.println(responseJSON.email);
+            }
+            else {
+                System.out.println("Viga");
+            }
             connection.disconnect();
-
             return responseJSON;
 
         } catch (IOException e) {
@@ -114,17 +115,61 @@ public class LoginOrSignup {
 
     }
 
-    public void createUserDbEntry(String email) throws IOException {
-        HttpURLConnection connection = new ConnectToCloud().connectToDatabaseDocument("users", email);
-        connection.setDoOutput(true);
+    public boolean createUserDbEntry(String email) throws IOException {
+        // Loome andmebaasi dokumendi, mis viitab uuele kasutajale.
+        String urlString = "https://firestore.googleapis.com/v1/projects/obje-8d9a1/databases/(default)/documents/users/" + email;
+        HttpURLConnection connection = (HttpURLConnection) new URL(urlString).openConnection();
         connection.setRequestMethod("POST");
+        connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
         connection.setRequestProperty("Content-Type", "application/json");
-
-        String requestBody = "{ \\\"fields\\\": {\\\"bio\\\": {\\\"stringValue\\\": \\\"\uD83D\uDE0A\\\"}, \\\"likedPosts\\\": {\\\"arrayValue\\\": {\\\"values\\\": []}}} }";
-
-        try (OutputStream outputStream = connection.getOutputStream()) {
-            byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
-            outputStream.write(input, 0, input.length);
+        connection.setDoOutput(true);
+        OutputStream os = connection.getOutputStream();
+        os.flush();
+        os.close();
+        int responseCode = connection.getResponseCode();
+        connection.disconnect();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            System.out.println("Kasutaja lisatud andmebaasi");
+            return createProfile(email);
         }
+        else return false;
+    }
+    public boolean createProfile(String email) throws IOException {
+        // Uuendame loodud kasutaja välju, et ei oleks tühi (loome baas väljad)
+        String urlString = "https://firestore.googleapis.com/v1/projects/obje-8d9a1/databases/(default)/documents/users/" + email;
+        UserProfile userProfile = new UserProfile();
+        userProfile.setName(urlString);
+        // Lisame uude profiili väljad.
+        userProfile.setUserInformation(new UserInformation());
+        userProfile.getUserInformation().setBio(new UserInformation.Bio());
+        userProfile.getUserInformation().getBio().setStringValue("");
+
+        userProfile.getUserInformation().setSubscriptions(new UserInformation.Subscriptions());
+        userProfile.getUserInformation().getSubscriptions().setArrayValue(new UserInformation.ArrayValue());
+        userProfile.getUserInformation().getSubscriptions().getArrayValue().setValues(new ArrayList<>());
+
+        userProfile.getUserInformation().setLikedPosts(new UserInformation.LikedPosts());
+        userProfile.getUserInformation().getLikedPosts().setArrayValue(new UserInformation.ArrayValue());
+        userProfile.getUserInformation().getLikedPosts().getArrayValue().setValues(new ArrayList<>());
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(userProfile);
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(urlString).openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setDoOutput(true);
+        OutputStream os = connection.getOutputStream();
+        os.write(json.getBytes());
+        os.flush();
+        os.close();
+        int responseCode = connection.getResponseCode();
+        connection.disconnect();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            System.out.println("Profiil loodud");
+            return true;
+        }
+        else return false;
     }
 }

@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Main {
     private static String userName;
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) throws IOException{
 
@@ -25,8 +25,6 @@ public class Main {
                 kasutajaInfo = session.logIn(); 
                 if (kasutajaInfo != null) {
                     System.out.println("Oled sisse logitud!");
-                } else {
-                    System.out.println("Sisselogimine ebaõnnestus");
                 }
                 break;
             case 2:
@@ -75,7 +73,7 @@ public class Main {
                     break;
             }
 
-            
+
         }
     }
 }

@@ -50,6 +50,7 @@ public class Activity {
         commands.put("post", new PostCommand(activity));
         commands.put("subscribe", new SubscribeCommand(activity));
         commands.put("followed", new ShowFollowedCommand(activity));
+        commands.put("whois", new WhoIs(activity));
 
         while (true) {
             System.out.print("> ");
@@ -250,7 +251,18 @@ public class Activity {
         }
     }
 
-
+    public void showAboutUser(String userName) throws IOException {
+        String userEmail = "";
+        for (Post post: posts){
+            if (userName.equals(post.getFields().getAuthor().getStringValue())){
+                userEmail = post.getFields().getEmail().getStringValue();
+                UserProfile searchedUser = getUserProfileData(userEmail);
+                System.out.println("About " + userName + ":");
+                System.out.println(searchedUser.getUserInformation().getBio().getStringValue());
+                return;
+            }
+        }
+    }
 
 
 }

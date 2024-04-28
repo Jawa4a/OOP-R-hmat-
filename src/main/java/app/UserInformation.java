@@ -57,6 +57,10 @@ public class UserInformation {
         public String getStringValue() {
             return stringValue;
         }
+
+        public void setStringValue(String newBio) {
+            this.stringValue = newBio;
+        }
     }
 
     static class LikedPosts {

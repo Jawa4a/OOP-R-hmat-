@@ -14,9 +14,15 @@ public class UserProfile {
     public String getName() {
         return name;
     }
-
+    public void setName(String str) {
+        this.name=str;
+    }
     public UserInformation getUserInformation() {
         return userInformation;
+    }
+
+    public void setUserInformation(UserInformation newUserInformation) {
+        this.userInformation=newUserInformation;
     }
 
     public String getCreateTime() {
