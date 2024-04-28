@@ -140,9 +140,7 @@ public class Activity {
             ObjectMapper objectMapper = new ObjectMapper();
             String currentUserFields = objectMapper.writeValueAsString(curUser.getFields());
             String requestBody = "{\"fields\": " + currentUserFields + " }";
-
-            System.out.println(curUser.getName());
-            HttpURLConnection connection = new ConnectToCloud().connectToDatabaseDocument("users", curUser.getName());
+            HttpURLConnection connection = (HttpURLConnection) new URL("https://firestore.googleapis.com/v1/" + curUser.getName()).openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
             connection.setRequestProperty("Content-Type", "application/json");
@@ -151,8 +149,8 @@ public class Activity {
             os.write(requestBody.getBytes());
             os.flush();
             os.close();
-            System.out.println(connection.getResponseCode());
-            System.out.println(connection.getResponseMessage());
+            int res = connection.getResponseCode();
+
 
         } catch (Exception e){
             System.out.println(e);
