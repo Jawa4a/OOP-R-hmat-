@@ -1,8 +1,10 @@
 package app;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -119,6 +121,7 @@ public class Activity {
         if (responseCode == HttpURLConnection.HTTP_OK) {
             if(!userDbEntry.getFields().getLikedPosts().getArrayValue().checkIfPostIsLiked(curPost.getName())){
                 System.out.println("Post liked");
+                addLikedPost(connection, userDbEntry ,curPost.getName());
             } else {
                 System.out.println("You have already liked this post");
             }
@@ -130,6 +133,32 @@ public class Activity {
 
     }
 
+
+    public void addLikedPost(HttpURLConnection connection2, UserDbEntry curUser, String postaddress) {
+        try {
+            curUser.addLikedPost(postaddress);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String currentUserFields = objectMapper.writeValueAsString(curUser.getFields());
+            String requestBody = "{\"fields\": " + currentUserFields + " }";
+
+            System.out.println(curUser.getName());
+            HttpURLConnection connection = new ConnectToCloud().connectToDatabaseDocument("users", curUser.getName());
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            OutputStream os = connection.getOutputStream();
+            os.write(requestBody.getBytes());
+            os.flush();
+            os.close();
+            System.out.println(connection.getResponseCode());
+            System.out.println(connection.getResponseMessage());
+
+        } catch (Exception e){
+            System.out.println(e);
+            System.out.println("problem adding liked post");
+        }
+    }
 
 
     public void writePost(String autor) throws IOException {

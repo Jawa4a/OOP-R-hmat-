@@ -1,5 +1,7 @@
 package app;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -10,6 +12,9 @@ public class UserDbEntryFields {
 
     @JsonProperty("likedPosts")
     private LikedPosts likedPosts;
+
+    @JsonProperty("subscriptions")
+    private UserInformation.Subscriptions subscriptions;
 
 
     // Getters and Setters
@@ -35,6 +40,25 @@ public class UserDbEntryFields {
         return "Fields{" + "bio='" + bio + '\'' + ", likedPosts=" + likedPosts + '}';
     }
 
+    public void addLikedPost(String postaddress) {
+        likedPosts.addValue(postaddress);
+    }
+
+
+    static class Subscriptions {
+        private UserInformation.ArrayValue arrayValue;
+
+        @JsonProperty("arrayValue")
+        public UserInformation.ArrayValue getArrayValue() {
+            return arrayValue;
+        }
+
+        @JsonProperty("arrayValue")
+        public void setArrayValue(UserInformation.ArrayValue arrayValue) {
+            this.arrayValue = arrayValue;
+        }
+    }
+
     static class Bio {
         @JsonProperty("stringValue")
         private String stringValue;
@@ -56,6 +80,9 @@ public class UserDbEntryFields {
         public void setArrayValue(ArrayValue arrayValue) {
             this.arrayValue = arrayValue;
         }
+        public void addValue(String value){
+            arrayValue.addValue(value);
+        }
     }
 
     static class ArrayValue {
@@ -71,6 +98,11 @@ public class UserDbEntryFields {
             return false;
         }
 
+        public void addValue(String value){
+            values.add(new Value(value));
+            System.out.println(values);
+        }
+
         @JsonProperty("values")
         public List<Value> getValues() {
             return values;
@@ -80,6 +112,7 @@ public class UserDbEntryFields {
         public void setValues(List<Value> values) {
             this.values = values;
         }
+
 
     }
 
@@ -93,6 +126,14 @@ public class UserDbEntryFields {
 
         @JsonProperty("stringValue")
         public void setStringValue(String stringValue) {
+            this.stringValue = stringValue;
+        }
+        public Value(){
+            super();
+        }
+
+        @JsonIgnore
+        public Value(String stringValue) {
             this.stringValue = stringValue;
         }
     }
