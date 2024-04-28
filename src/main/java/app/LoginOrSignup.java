@@ -51,7 +51,7 @@ public class LoginOrSignup {
             // API vastus JSON-i
             LoginSignupResponse responseJSON = mapper.readValue(response.toString(), LoginSignupResponse.class);
 
-            System.out.println("Sisse logitud kui:");
+            System.out.println("Tere,");
             System.out.println(responseJSON.email);
 //            connection.disconnect();
 

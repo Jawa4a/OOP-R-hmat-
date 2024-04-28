@@ -9,7 +9,7 @@ interface Command {
 class HelpCommand implements Command {
     @Override
     public void execute(String[] args) {
-        System.out.println("Available commands: next, prev, post, like, subscribe, followed, whois");
+        System.out.println("Available commands: next, prev, post, like, subscribe, followed, whois, commentshow, comment, top");
     }
 }
 // Jargmised postitused.
@@ -137,6 +137,19 @@ class ShowCommentsCommand implements Command {
     public void execute(String[] args) throws IOException {
         int postNumber = this.activity.getPostNumber();
         this.activity.showComments(postNumber);
+    }
+}
+
+class Top implements Command {
+    Activity activity;
+
+    public Top(Activity activity){
+        this.activity = activity;
+    }
+
+    @Override
+    public void execute(String[] args) throws IOException {
+        this.activity.top();
     }
 }
 

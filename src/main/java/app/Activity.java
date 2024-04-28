@@ -55,6 +55,7 @@ public class Activity {
         commands.put("whois", new WhoIs(activity));
         commands.put("comment", new CommentCommand(activity, userInfo));
         commands.put("commentshow", new ShowCommentsCommand(activity));
+        commands.put("top", new Top(activity));
 
         while (true) {
             System.out.print("> ");
@@ -87,6 +88,10 @@ public class Activity {
     }
 
     public void showPosts(int nihe) throws IOException {
+        if(lopp >= posts.length){
+            System.out.println("No more posts to show. Use  \"top\" to return to first post.");
+            return;
+        }
         algus += nihe;
         lopp += nihe;
         for (int i = algus; i < lopp; i++) {
@@ -172,7 +177,7 @@ public class Activity {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
 
-        String requestBody = "{ \"fields\": {\"author\": { \"stringValue\": \"" + autor + "\" }, \"email\": { \"stringValue\": \"" + this.userInfo.email + "\" },  \"likes\": { \"integerValue\": \"0\" },\"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + "\",  } } }";
+        String requestBody = "{ \"fields\": {\"author\": { \"stringValue\": \"" + autor + "\" }, \"email\": { \"stringValue\": \"" + this.userInfo.email + "\" },  \"likes\": { \"integerValue\": \"0\" },\"time\": { \"timestampValue\": \"2024-04-07T12:15:05.735Z\" }, \"content\": { \"stringValue\": \"" + postContent + "\", }, \"comments\": {\"arrayValue\":{},  } } }";
 
         try (OutputStream outputStream = connection.getOutputStream()) {
             byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
@@ -322,4 +327,9 @@ public class Activity {
     }
 
 
+    public void top() throws IOException {
+        algus=0;
+        lopp=1;
+        showPosts(0);
+    }
 }
