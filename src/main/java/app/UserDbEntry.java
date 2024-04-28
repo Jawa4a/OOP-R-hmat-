@@ -58,4 +58,8 @@ public class UserDbEntry {
                 ", updateTime='" + updateTime + '\'' +
                 '}';
     }
+
+    public void addLikedPost(String postaddress) {
+        fields.addLikedPost(postaddress);
+    }
 }
