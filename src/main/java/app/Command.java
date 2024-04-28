@@ -59,7 +59,7 @@ class LikeCommand implements Command {
     @Override
     public void execute(String[] args) throws IOException {
         int postNumber = this.activity.getPostNumber();
-            this.activity.likePost(postNumber, userInfo);
+        this.activity.likePost(postNumber, userInfo);
     }
 }
 
@@ -100,5 +100,19 @@ class WhoIs implements Command {
     public void execute(String[] args) throws IOException {
         String userName = args[1];
         activity.showAboutUser(userName);
+    }
+}
+
+class Comments implements Command {
+    Activity activity;
+
+    public Comments(Activity activity) {
+        this.activity = activity;
+    }
+
+    @Override
+    public void execute(String[] args) throws IOException {
+        int postNumber = this.activity.getPostNumber();
+        activity.showComments(postNumber);
     }
 }

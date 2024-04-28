@@ -53,6 +53,8 @@ public class Activity {
         commands.put("subscribe", new SubscribeCommand(activity));
         commands.put("followed", new ShowFollowedCommand(activity));
         commands.put("whois", new WhoIs(activity));
+        commands.put("comments", new Comments(activity));
+
 
         while (true) {
             System.out.print("> ");
@@ -291,5 +293,23 @@ public class Activity {
         }
     }
 
-
+    public void showComments(int postnumber) {
+        Post curPost = posts[postnumber];
+        List<Fields.ArrayValue.Value> comments =  curPost.getFields().getComments().getArrayValue().getValues();
+        if (comments.isEmpty()){
+            System.out.println("There are no comments yet.");
+            return;
+        }
+        for (Fields.ArrayValue.Value comment: comments){
+            // kasutame "×" info eraldajana sest seda sümbolit väga harva keegi päriselt tahab kommentaaris
+            // kasutada ja see teeb elu palju lihtsamaks
+            String[] commentString = comment.getStringValue().split("×");
+            System.out.println("--------------------------");
+            System.out.println(commentString[0]);
+            System.out.println(commentString[1]);
+            System.out.println();
+            System.out.println(commentString[2]);
+            System.out.println("--------------------------");
+        }
+    }
 }

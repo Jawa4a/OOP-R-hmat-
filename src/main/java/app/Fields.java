@@ -1,6 +1,9 @@
 package app;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 
 class Fields {
     private Content content;
@@ -8,6 +11,7 @@ class Fields {
     private Email email;
     private Time time;
     private Likes likes;
+    private Comments comments;
 
     public Content getContent() {
         return content;
@@ -25,12 +29,23 @@ class Fields {
         return likes;
     }
 
-    public Email getEmail(){
+    public Email getEmail() {
         return email;
+    }
+
+    public Comments getComments() {
+        return comments;
     }
 
     public void addLike() {
         this.likes.addLike();
+    }
+
+    @Override
+    public String toString() {
+        return author.getStringValue() + "\n" + time.getStringValue() + "\n" + "--------------------------"
+                + "\n" + content.getStringValue() + "\n" + "--------------------------" + "\n" +
+                +likes.getIntegerValue() + " Likes";
     }
 
     static class Content {
@@ -51,13 +66,14 @@ class Fields {
         }
     }
 
-    static class Time implements Comparable<Time>{
+    static class Time implements Comparable<Time> {
         @JsonProperty("timestampValue")
         private String stringValue;
 
         public String getStringValue() {
             return stringValue;
         }
+
         @Override
         public int compareTo(Time o) {
             return o.stringValue.compareTo(this.stringValue);
@@ -86,11 +102,64 @@ class Fields {
         }
     }
 
+    static class Comments {
+        private ArrayValue arrayValue;
 
-    @Override
-    public String toString() {
-        return author.getStringValue() + "\n" + time.getStringValue()+ "\n"+ "--------------------------"
-                + "\n" + content.getStringValue() + "\n" + "--------------------------" + "\n" +
-                + likes.getIntegerValue() + " Likes";
+        public void addComment(String comment) {
+            arrayValue.addValue(comment);
+        }
+
+        @JsonProperty("arrayValue")
+        public ArrayValue getArrayValue() {
+            return arrayValue;
+        }
+
+        @JsonProperty("arrayValue")
+        public void setArrayValue(ArrayValue arrayValue) {
+            this.arrayValue = arrayValue;
+        }
+    }
+
+    static class ArrayValue {
+        private List<Value> values;
+
+        public void addValue(String value) {
+            values.add(new Value(value));
+        }
+
+        @JsonProperty("values")
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @JsonProperty("values")
+        public void setValues(List<Value> values) {
+            this.values = values;
+        }
+
+        static class Value {
+            private String stringValue;
+
+            @JsonIgnore
+            public Value(String comment) {
+                this.stringValue = comment;
+            }
+
+            public Value() {
+                super();
+            }
+
+            @JsonProperty("stringValue")
+            public String getStringValue() {
+                return stringValue;
+            }
+
+            @JsonProperty("stringValue")
+            public void setStringValue(String stringValue) {
+                this.stringValue = stringValue;
+            }
+
+        }
+
     }
 }
