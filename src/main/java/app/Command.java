@@ -102,3 +102,44 @@ class WhoIs implements Command {
         activity.showAboutUser(userName);
     }
 }
+
+class CommentCommand implements Command {
+    Activity activity;
+    LoginSignupResponse userInfo;
+
+    public CommentCommand(Activity activity, LoginSignupResponse userInfo) {
+        this.activity = activity;
+        this.userInfo = userInfo;
+    }
+
+    @Override
+    public void execute(String[] args) throws IOException {
+        int postNumber = this.activity.getPostNumber();
+        String comment = args.length > 1 ? args[1] : ""; // Assuming second argument is the comment text
+        if (!comment.isEmpty()) {
+            this.activity.commentOnPost(postNumber, comment, userInfo);
+        } else {
+            System.out.println("No comment provided");
+        }
+    }
+}
+
+
+// Add this new class in Command.java
+class ShowCommentsCommand implements Command {
+    Activity activity;
+
+    public ShowCommentsCommand(Activity activity) {
+        this.activity = activity;
+    }
+
+    @Override
+    public void execute(String[] args) throws IOException {
+        int postNumber = this.activity.getPostNumber();
+        this.activity.showComments(postNumber);
+    }
+}
+
+
+
+

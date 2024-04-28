@@ -53,6 +53,8 @@ public class Activity {
         commands.put("subscribe", new SubscribeCommand(activity));
         commands.put("followed", new ShowFollowedCommand(activity));
         commands.put("whois", new WhoIs(activity));
+        commands.put("comment", new CommentCommand(activity, userInfo));
+        commands.put("commentshow", new ShowCommentsCommand(activity));
 
         while (true) {
             System.out.print("> ");
@@ -291,6 +293,26 @@ public class Activity {
                 return;
             }
         }
+    }
+
+    public void showComments(int postNumber) {
+        Post post = posts[postNumber]; 
+        List<Comment> comments = post.getComments();
+        if (comments.isEmpty()) {
+            System.out.println("Puuduvad komentaarid");
+        } else {
+            System.out.println("Comments:");
+            for (Comment comment : comments) {
+                System.out.println(comment.toString());
+            }
+        }
+    }
+    
+    public void commentOnPost(int postNumber, String comment, LoginSignupResponse userInfo) throws IOException {
+
+        Post post = posts[postNumber];
+        post.addComment(userInfo.getEmail().split("@")[0], comment);
+        System.out.println("Kommentaar on lisatud");
     }
 
 
