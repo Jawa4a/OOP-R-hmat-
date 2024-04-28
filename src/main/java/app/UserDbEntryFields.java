@@ -100,7 +100,6 @@ public class UserDbEntryFields {
 
         public void addValue(String value){
             values.add(new Value(value));
-            System.out.println(values);
         }
 
         @JsonProperty("values")
