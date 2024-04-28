@@ -53,8 +53,8 @@ public class Activity {
         commands.put("subscribe", new SubscribeCommand(activity));
         commands.put("followed", new ShowFollowedCommand(activity));
         commands.put("whois", new WhoIs(activity));
-        commands.put("comments", new Comments(activity));
-
+        commands.put("comment", new CommentCommand(activity, userInfo));
+        commands.put("commentshow", new ShowCommentsCommand(activity));
 
         while (true) {
             System.out.print("> ");
@@ -293,23 +293,25 @@ public class Activity {
         }
     }
 
-    public void showComments(int postnumber) {
-        Post curPost = posts[postnumber];
-        List<Fields.ArrayValue.Value> comments =  curPost.getFields().getComments().getArrayValue().getValues();
-        if (comments.isEmpty()){
-            System.out.println("There are no comments yet.");
-            return;
-        }
-        for (Fields.ArrayValue.Value comment: comments){
-            // kasutame "×" info eraldajana sest seda sümbolit väga harva keegi päriselt tahab kommentaaris
-            // kasutada ja see teeb elu palju lihtsamaks
-            String[] commentString = comment.getStringValue().split("×");
-            System.out.println("--------------------------");
-            System.out.println(commentString[0]);
-            System.out.println(commentString[1]);
-            System.out.println();
-            System.out.println(commentString[2]);
-            System.out.println("--------------------------");
+    public void showComments(int postNumber) {
+        Post post = posts[postNumber]; 
+        List<Comment> comments = post.getComments();
+        if (comments.isEmpty()) {
+            System.out.println("Puuduvad komentaarid");
+        } else {
+            System.out.println("Comments:");
+            for (Comment comment : comments) {
+                System.out.println(comment.toString());
+            }
         }
     }
+    
+    public void commentOnPost(int postNumber, String comment, LoginSignupResponse userInfo) throws IOException {
+
+        Post post = posts[postNumber];
+        post.addComment(userInfo.getEmail().split("@")[0], comment);
+        System.out.println("Kommentaar on lisatud");
+    }
+
+
 }

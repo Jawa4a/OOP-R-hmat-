@@ -1,5 +1,8 @@
 package app;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 class Post {
@@ -9,8 +12,19 @@ class Post {
     private String createTime;
     @JsonProperty("updateTime")
     private String updateTime;
+    private List<Comment> comments;
 
+    public Post() {
+        this.comments = new ArrayList<>();
+    }
 
+    public void addComment(String userName, String commentText) {
+        Comment.addCommentToList(this.comments, userName, commentText);
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
 
     public String getName() {
         return name;
@@ -31,6 +45,8 @@ class Post {
     public void addLike() {
         this.fields.addLike();
     }
+
+
 
     @Override
     public String toString() {
