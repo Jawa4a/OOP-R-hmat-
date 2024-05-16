@@ -25,7 +25,7 @@ public class LoginOrSignup {
         // vaja teha try-w-resources äkki?
 
         System.out.println("Sisesta e-maili aadress");
-        String email = scanner.nextLine();
+        String email = scanner.nextLine().toLowerCase();
         System.out.println("Sisesta salasõna");
         String password = scanner.nextLine();
         String requestBody = String.format("{\"email\":\"%s\",\"password\":\"%s\",\"returnSecureToken\":true}", email, password);
@@ -151,6 +151,15 @@ public class LoginOrSignup {
         userProfile.getUserInformation().setLikedPosts(new UserInformation.LikedPosts());
         userProfile.getUserInformation().getLikedPosts().setArrayValue(new UserInformation.ArrayValue());
         userProfile.getUserInformation().getLikedPosts().getArrayValue().setValues(new ArrayList<>());
+
+        userProfile.getUserInformation().setFriends(new UserInformation.Friends());
+        userProfile.getUserInformation().getFriends().setArrayValue(new UserInformation.ArrayValue());
+        userProfile.getUserInformation().getFriends().getArrayValue().setValues(new ArrayList<>());
+
+        userProfile.getUserInformation().setFriendrequests(new UserInformation.FriendRequests());
+        userProfile.getUserInformation().getFriendrequests().setArrayValue(new UserInformation.ArrayValue());
+        userProfile.getUserInformation().getFriendrequests().getArrayValue().setValues(new ArrayList<>());
+
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(userProfile);

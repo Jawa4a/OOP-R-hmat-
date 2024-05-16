@@ -14,6 +14,11 @@ public class UserInformation {
     @JsonProperty("subscriptions")
     private Subscriptions subscriptions;
 
+    @JsonProperty("friends")
+    private Friends friends;
+
+    @JsonProperty("friendrequests")
+    private FriendRequests friendrequests;
 
     // Getters and Setters
     public Bio getBio() {
@@ -38,6 +43,22 @@ public class UserInformation {
 
     public void setSubscriptions(Subscriptions sub) {
         this.subscriptions = sub;
+    }
+
+    public Friends getFriends() {
+        return friends;
+    }
+
+    public void setFriends(Friends friend) {
+        this.friends = friend;
+    }
+
+    public FriendRequests getFriendrequests() {
+        return friendrequests;
+    }
+
+    public void setFriendrequests(FriendRequests friendrequests) {
+        this.friendrequests = friendrequests;
     }
 
     // toString method to display object as string
@@ -78,6 +99,34 @@ public class UserInformation {
     }
 
     static class Subscriptions {
+        private ArrayValue arrayValue;
+
+        @JsonProperty("arrayValue")
+        public ArrayValue getArrayValue() {
+            return arrayValue;
+        }
+
+        @JsonProperty("arrayValue")
+        public void setArrayValue(ArrayValue arrayValue) {
+            this.arrayValue = arrayValue;
+        }
+    }
+
+    static class Friends {
+        private ArrayValue arrayValue;
+
+        @JsonProperty("arrayValue")
+        public ArrayValue getArrayValue() {
+            return arrayValue;
+        }
+
+        @JsonProperty("arrayValue")
+        public void setArrayValue(ArrayValue arrayValue) {
+            this.arrayValue = arrayValue;
+        }
+    }
+
+    static class FriendRequests {
         private ArrayValue arrayValue;
 
         @JsonProperty("arrayValue")
