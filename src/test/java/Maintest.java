@@ -55,7 +55,7 @@ public class Maintest {
 
         if (kasutajaInfo!=null)
         {
-            Activity activity = new Activity();
+            Activity activity = new Activity(kasutajaInfo);
             String emailKasutajanimi = kasutajaInfo.getEmail().split("@")[0];
 
 

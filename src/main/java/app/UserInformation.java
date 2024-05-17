@@ -20,6 +20,12 @@ public class UserInformation {
     @JsonProperty("friendrequests")
     private FriendRequests friendrequests;
 
+    @JsonProperty("username")
+    private Username username;
+
+    @JsonProperty("sentrequests")
+    private Sentrequests sentrequests;
+
     // Getters and Setters
     public Bio getBio() {
         return bio;
@@ -61,14 +67,49 @@ public class UserInformation {
         this.friendrequests = friendrequests;
     }
 
+    public Username getUsername() {
+        return username;
+    }
+
+    public void setUsername(Username username) {
+        this.username = username;
+    }
+
+    public Sentrequests getSentrequests() {
+        return sentrequests;
+    }
+
+    public void setSentrequests(Sentrequests sentrequests) {
+        this.sentrequests = sentrequests;
+    }
+
     // toString method to display object as string
+
+
     @Override
     public String toString() {
         return "UserInformation{" +
                 "bio=" + bio +
                 ", likedPosts=" + likedPosts +
                 ", subscriptions=" + subscriptions +
+                ", friends=" + friends +
+                ", friendrequests=" + friendrequests +
+                ", username=" + username +
+                ", sentrequests=" + sentrequests +
                 '}';
+    }
+
+    static class Username{
+        @JsonProperty("stringValue")
+        private String stringValue;
+
+        public String getStringValue() {
+            return stringValue;
+        }
+
+        public void setStringValue(String newUsername) {
+            this.stringValue = newUsername;
+        }
     }
 
     static class Bio {
@@ -113,6 +154,20 @@ public class UserInformation {
     }
 
     static class Friends {
+        private ArrayValue arrayValue;
+
+        @JsonProperty("arrayValue")
+        public ArrayValue getArrayValue() {
+            return arrayValue;
+        }
+
+        @JsonProperty("arrayValue")
+        public void setArrayValue(ArrayValue arrayValue) {
+            this.arrayValue = arrayValue;
+        }
+    }
+
+    static class Sentrequests {
         private ArrayValue arrayValue;
 
         @JsonProperty("arrayValue")

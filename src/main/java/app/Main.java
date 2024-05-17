@@ -52,6 +52,7 @@ public class Main {
             System.out.println("0. Exit");
             System.out.println("1. Loo postitus");
             System.out.println("2. Näita postitusi");
+            System.out.println("3. Paranda enda kasutaja andmed");
             
             int tegevus = scanner.nextInt();
 
@@ -67,6 +68,11 @@ public class Main {
                     activity.loadPosts();
                     activity.showPosts(0);
                     activity.CommandHandler(activity, kasutajaInfo);
+                    break;
+                case 3:
+                    System.out.println("Vaatame teie profiili.");
+                    FixUserDB fixUserDB = new FixUserDB();
+                    fixUserDB.checkUserDB(kasutajaInfo.email);
                     break;
                 default:
                     System.out.println("Tundmatu tegevus");

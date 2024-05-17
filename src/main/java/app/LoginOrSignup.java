@@ -2,15 +2,14 @@ package app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class LoginOrSignup {
     // avalik "key", võib committida
@@ -25,7 +24,7 @@ public class LoginOrSignup {
         // vaja teha try-w-resources äkki?
 
         System.out.println("Sisesta e-maili aadress");
-        String email = scanner.nextLine().toLowerCase();
+        String email = scanner.nextLine();
         System.out.println("Sisesta salasõna");
         String password = scanner.nextLine();
         String requestBody = String.format("{\"email\":\"%s\",\"password\":\"%s\",\"returnSecureToken\":true}", email, password);
@@ -51,7 +50,7 @@ public class LoginOrSignup {
             // API vastus JSON-i
             LoginSignupResponse responseJSON = mapper.readValue(response.toString(), LoginSignupResponse.class);
 
-            System.out.println("Tere,");
+            System.out.print("Tere, ");
             System.out.println(responseJSON.email);
 //            connection.disconnect();
 
@@ -70,7 +69,7 @@ public class LoginOrSignup {
         String url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + apiKey;
         System.out.println("Uue kasutaja loomine");
         System.out.println("Sisesta uue kasutaja e-maili aadress");
-        String email = scanner.nextLine();
+        String email = scanner.nextLine().toLowerCase();
         System.out.println("Sisesta uue kasutaja salasõna");
         String password = scanner.nextLine();
         String requestBody = String.format("{\"email\":\"%s\",\"password\":\"%s\",\"returnSecureToken\":true}", email, password);
@@ -96,7 +95,7 @@ public class LoginOrSignup {
             // API vastus JSON-i
             LoginSignupResponse responseJSON = mapper.readValue(response.toString(), LoginSignupResponse.class);
 
-            if (createUserDbEntry(email)){
+            if (createProfile(email)){ //createUserDbEntry(email)
                 System.out.println("Kasutaja loodud!");
                 System.out.println("Sisse logitud kui:");
                 System.out.println(responseJSON.email);
@@ -112,7 +111,6 @@ public class LoginOrSignup {
             connection.disconnect();
             return null;
         }
-
     }
 
     public boolean createUserDbEntry(String email) throws IOException {
@@ -139,6 +137,7 @@ public class LoginOrSignup {
         String urlString = "https://firestore.googleapis.com/v1/projects/obje-8d9a1/databases/(default)/documents/users/" + email;
         UserProfile userProfile = new UserProfile();
         userProfile.setName(urlString);
+
         // Lisame uude profiili väljad.
         userProfile.setUserInformation(new UserInformation());
         userProfile.getUserInformation().setBio(new UserInformation.Bio());
@@ -160,6 +159,14 @@ public class LoginOrSignup {
         userProfile.getUserInformation().getFriendrequests().setArrayValue(new UserInformation.ArrayValue());
         userProfile.getUserInformation().getFriendrequests().getArrayValue().setValues(new ArrayList<>());
 
+        userProfile.getUserInformation().setSentrequests(new UserInformation.Sentrequests());
+        userProfile.getUserInformation().getSentrequests().setArrayValue(new UserInformation.ArrayValue());
+        userProfile.getUserInformation().getSentrequests().getArrayValue().setValues(new ArrayList<>());
+
+        String uniqueUsername = checkUniqueUsername();
+
+        userProfile.getUserInformation().setUsername(new UserInformation.Username());
+        userProfile.getUserInformation().getUsername().setStringValue(uniqueUsername);
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(userProfile);
@@ -180,5 +187,31 @@ public class LoginOrSignup {
             return true;
         }
         else return false;
+    }
+
+    private String checkUniqueUsername() throws IOException {
+        String dbLink = "https://firestore.googleapis.com/v1/projects/obje-8d9a1/databases/(default)/documents/users";
+        HttpURLConnection connection = (HttpURLConnection) new URL(dbLink).openConnection();
+        connection.setRequestMethod("GET");
+        InputStream inputStream = connection.getInputStream();
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))){
+            ObjectMapper mapper = new ObjectMapper();
+            Users response = mapper.readValue(reader, Users.class);
+            Set<String> existingNames = new HashSet<>();
+            for (UserProfile user : response.getUsers()){
+                try {
+                    existingNames.add(user.getUserInformation().getUsername().getStringValue());
+                } catch (NullPointerException e){}
+            }
+            System.out.println("Sisestage uue kasutaja nimi: ");
+            String username = scanner.nextLine();
+            while (existingNames.contains(username.toLowerCase())){
+                System.out.println("Kahjuks ei olnud kasutajanimi unikaalne.\nSisestage muu kasutaja nimi: ");
+                username = scanner.nextLine();
+            }
+            return username;
+        }catch (IOException e){
+            return "";
+        }
     }
 }

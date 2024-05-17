@@ -277,7 +277,7 @@ public class Activity {
             String postEmail = post.getFields().getEmail().getStringValue();
             if (!postEmail.isEmpty()) {
                 if (setOfValues.contains(postEmail)) {
-                    System.out.println("");
+                    System.out.println();
                     System.out.println("\n" + post.getFields().toString());
                     counter++;
                 }
@@ -325,7 +325,6 @@ public class Activity {
         post.addComment(userInfo.getEmail().split("@")[0], comment);
         System.out.println("Kommentaar on lisatud");
     }
-
 
     public void top() throws IOException {
         algus=0;
