@@ -61,7 +61,7 @@ public class Main {
                     System.out.println("Väljumine...");
                     return;
                 case 1:
-                    activity.writePost(emailKasutajanimi);
+                    activity.writePost();
                     break;
                 case 2:
                     System.out.println("\nViimased postitused:");

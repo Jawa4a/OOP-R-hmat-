@@ -217,6 +217,11 @@ public class UserInformation {
             this.values = values;
         }
 
+        @JsonProperty("values")
+        public void addValue(Value value) {this.values.add(value);}
+
+        @JsonProperty("values")
+        public void removeValue(Value value) {this.values.remove(value);}
     }
 
     static class Value {

@@ -9,7 +9,7 @@ interface Command {
 class HelpCommand implements Command {
     @Override
     public void execute(String[] args) {
-        System.out.println("Available commands: next, prev, post, like, subscribe, followed, whois, commentshow, comment, top");
+        System.out.println("Available commands: next, prev, post, like, subscribe, followed, whois, commentshow, comment, top, reloadposts, friends, addfriend, firendrequests");
     }
 }
 // Jargmised postitused.
@@ -44,7 +44,7 @@ class PostCommand implements Command {
     @Override
     public void execute(String[] args) throws IOException {
         String autor = activity.getautor();
-        activity.writePost(autor);
+        activity.writePost();
     }
 }
 // Lisab like.
@@ -150,6 +150,38 @@ class Top implements Command {
     @Override
     public void execute(String[] args) throws IOException {
         this.activity.top();
+    }
+}
+
+class Reload implements Command {
+    Activity activity;
+    public Reload(Activity activity){
+        this.activity = activity;
+    }
+    @Override
+    public void execute(String[] args) throws IOException {
+        this.activity.loadPosts();
+    }
+}
+
+class AddFriend implements Command {
+    Activity activity;
+    public AddFriend(Activity activity){
+        this.activity = activity;
+    }
+    @Override
+    public void execute(String[] args) throws IOException {
+        this.activity.sendfriendrequest(args[1]);
+    }
+}
+class ShowFriends implements Command{
+    Activity activity;
+    public ShowFriends(Activity activity){
+        this.activity = activity;
+    }
+    @Override
+    public void execute(String[] args) throws IOException {
+        this.activity.showfriends();
     }
 }
 

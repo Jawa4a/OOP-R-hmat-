@@ -103,7 +103,7 @@ public class FixUserDB {
             }
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(userProfile);
-            System.out.println(json);
+//            System.out.println(json);
             HttpURLConnection connection = (HttpURLConnection) new URL(urlString).openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
@@ -136,7 +136,7 @@ public class FixUserDB {
                     existingNames.add(user.getUserInformation().getUsername().getStringValue());
                 } catch (NullPointerException e){}
             }
-//                    Arrays.stream(response.getUsers()).map(UserProfile::getUserInformation).map(UserInformation::getUsername).map(UserInformation.Username::getStringValue).map(String::toLowerCase).collect(Collectors.toSet());
+
             System.out.println("Sisestage kasutajanimi: ");
             String username = scanner.nextLine();
             while (existingNames.contains(username.toLowerCase())) {

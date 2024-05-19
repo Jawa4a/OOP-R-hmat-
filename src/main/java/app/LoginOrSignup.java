@@ -132,6 +132,7 @@ public class LoginOrSignup {
         }
         else return false;
     }
+
     public boolean createProfile(String email) throws IOException {
         // Uuendame loodud kasutaja välju, et ei oleks tühi (loome baas väljad)
         String urlString = "https://firestore.googleapis.com/v1/projects/obje-8d9a1/databases/(default)/documents/users/" + email;
@@ -200,8 +201,10 @@ public class LoginOrSignup {
             Set<String> existingNames = new HashSet<>();
             for (UserProfile user : response.getUsers()){
                 try {
-                    existingNames.add(user.getUserInformation().getUsername().getStringValue());
-                } catch (NullPointerException e){}
+                    existingNames.add(user.getUserInformation().getUsername().getStringValue().toLowerCase());
+                } catch (NullPointerException e){
+                    continue;
+                }
             }
             System.out.println("Sisestage uue kasutaja nimi: ");
             String username = scanner.nextLine();
