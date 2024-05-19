@@ -2,24 +2,26 @@ package app;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
 public class Activity {
 
+    private final LoginSignupResponse userInfo;
+    private final String projectID;
+    private final String baseLink;
     public int algus;
     public int lopp;
     public Post[] posts;
     private String autor;
-    private final LoginSignupResponse userInfo;
-    private final String projectID;
     private UserProfile userProfile;
-    private final String baseLink;
 
     public Activity(LoginSignupResponse userInfo) throws IOException {
         this.algus = 0;
@@ -29,6 +31,15 @@ public class Activity {
         this.userProfile = getUserProfileData(userInfo.email);
         this.autor = userInfo.getDisplayName();
         this.baseLink = "https://firestore.googleapis.com/v1/projects/" + this.projectID + "/databases/(default)/documents/";
+    }
+
+    public static boolean contains(char c, char[] s) {
+        for (Character character : s) {
+            if (character == c) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setautor(String autor) {
@@ -58,6 +69,7 @@ public class Activity {
         commands.put("reloadposts", new Reload(activity));
         commands.put("addfriend", new AddFriend(activity));
         commands.put("friends", new ShowFriends(activity));
+        commands.put("wordle", new Wordle(activity));
 
         while (true) {
             System.out.print("> ");
@@ -92,7 +104,7 @@ public class Activity {
         algus += nihe;
         lopp += nihe;
         for (int i = algus; i < lopp; i++) {
-            if(i >= posts.length){
+            if (i >= posts.length) {
                 System.out.println("No more posts to show. Use  \"top\" to return to first post.");
                 return;
             }
@@ -102,7 +114,7 @@ public class Activity {
         }
     }
 
-    public int getPostNumber(){
+    public int getPostNumber() {
         return algus;
     }
 
@@ -112,7 +124,7 @@ public class Activity {
         curPost.addLike();
         ObjectMapper mapper = new ObjectMapper();
         String currentPostFields = mapper.writeValueAsString(curPost.getFields());
-        String requestBody = "{\"fields\": "+ currentPostFields +" }";
+        String requestBody = "{\"fields\": " + currentPostFields + " }";
         HttpURLConnection connection = new LikePostConnection().connectToDatabase(postPath);
 
         connection.setRequestMethod("POST");
@@ -127,9 +139,9 @@ public class Activity {
         int responseCode = connection.getResponseCode();
         UserDbEntry userDbEntry = getUserData(userInfo.email);
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            if(!userDbEntry.getFields().getLikedPosts().getArrayValue().checkIfPostIsLiked(curPost.getName())){
+            if (!userDbEntry.getFields().getLikedPosts().getArrayValue().checkIfPostIsLiked(curPost.getName())) {
                 System.out.println("Post liked");
-                addLikedPost(connection, userDbEntry ,curPost.getName());
+                addLikedPost(connection, userDbEntry, curPost.getName());
             } else {
                 System.out.println("You have already liked this post");
             }
@@ -140,7 +152,6 @@ public class Activity {
         connection.disconnect();
 
     }
-
 
     public void addLikedPost(HttpURLConnection connection2, UserDbEntry curUser, String postaddress) {
         try {
@@ -160,16 +171,15 @@ public class Activity {
             int res = connection.getResponseCode();
 
 
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             System.out.println("problem adding liked post");
         }
     }
 
-
     public void writePost() throws IOException {
         String nickname = getUserNickname();
-        if (nickname.isEmpty()){
+        if (nickname.isEmpty()) {
             System.out.println("Teil pole kasutajanime, sisselogimisel sisestage 3, et parandada konto andmed.");
             return;
         }
@@ -212,15 +222,15 @@ public class Activity {
 
     public void subscribeuser(int postId) throws IOException {
 
-        Post curPost = posts[postId-1];
-        String urlString = "https://firestore.googleapis.com/v1/projects/" + projectID + "/databases/(default)/documents/users/"+ userInfo.email;
+        Post curPost = posts[postId - 1];
+        String urlString = "https://firestore.googleapis.com/v1/projects/" + projectID + "/databases/(default)/documents/users/" + userInfo.email;
         String sub = curPost.getFields().getEmail().getStringValue();
         UserInformation.Value newSubscription = new UserInformation.Value();
         newSubscription.setStringValue(sub);
 
-        if (userProfile.getUserInformation().getSubscriptions().getArrayValue().getValues()==null||!userProfile.getUserInformation().getSubscriptions().getArrayValue().checkInList(sub)) {
+        if (userProfile.getUserInformation().getSubscriptions().getArrayValue().getValues() == null || !userProfile.getUserInformation().getSubscriptions().getArrayValue().checkInList(sub)) {
             List<UserInformation.Value> existingValues = userProfile.getUserInformation().getSubscriptions().getArrayValue().getValues();
-            if (existingValues == null){
+            if (existingValues == null) {
                 existingValues = new ArrayList<>();
             }
             existingValues.add(newSubscription);
@@ -240,7 +250,7 @@ public class Activity {
             userProfile = getUserProfileData(userInfo.email);
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 // Kontrollime kas on olemas
-                if(!userProfile.getUserInformation().getLikedPosts().getArrayValue().checkInList(newSubscription.getStringValue())){
+                if (!userProfile.getUserInformation().getLikedPosts().getArrayValue().checkInList(newSubscription.getStringValue())) {
                     System.out.println("Subscribed");
                 } else {
                     System.out.println("Viga");
@@ -249,7 +259,7 @@ public class Activity {
                 System.out.println("Cannot subscribe: " + responseCode);
             }
             connection.disconnect();
-        } else{
+        } else {
             System.out.println("You have already subscribed this user");
         }
     }
@@ -280,8 +290,8 @@ public class Activity {
 
     public void showAboutUser(String userName) throws IOException {
         String userEmail = "";
-        for (Post post: posts){
-            if (userName.equals(post.getFields().getAuthor().getStringValue())){
+        for (Post post : posts) {
+            if (userName.equals(post.getFields().getAuthor().getStringValue())) {
                 userEmail = post.getFields().getEmail().getStringValue();
                 UserProfile searchedUser = getUserProfileData(userEmail);
                 System.out.println("About " + userName + ":");
@@ -292,7 +302,7 @@ public class Activity {
     }
 
     public void showComments(int postNumber) {
-        Post post = posts[postNumber]; 
+        Post post = posts[postNumber];
         List<Fields.ArrayValue.Value> comments = post.getFields().getComments().getArrayValue().getValues();
         if (comments == null || comments.isEmpty()) {
             System.out.println("Puuduvad komentaarid");
@@ -310,7 +320,7 @@ public class Activity {
             }
         }
     }
-    
+
     public void commentOnPost(int postNumber, String comment, LoginSignupResponse userInfo) throws IOException {
 
         Post post = posts[postNumber];
@@ -324,16 +334,15 @@ public class Activity {
     }
 
     public void top() throws IOException {
-        algus=0;
-        lopp=1;
+        algus = 0;
+        lopp = 1;
         showPosts(0);
     }
 
-    public String getUserNickname(){
+    public String getUserNickname() {
         try {
             return userProfile.getUserInformation().getUsername().getStringValue();
-        }
-        catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return "";
         }
     }
@@ -354,14 +363,14 @@ public class Activity {
             currentFriends = new ArrayList<>();
         }
 
-        if (currentFriends!=null && isinlist(currentFriends, reciever)){
+        if (currentFriends != null && isinlist(currentFriends, reciever)) {
             System.out.println("Kasutaja on juba teie sõber!");
             return;
         }
 
         String recieverProfile = findUser(reciever);
         UserProfile recProfile;
-        if (recieverProfile.isEmpty()){
+        if (recieverProfile.isEmpty()) {
             System.out.println("Kasutajat ei leitud;");
             return;
         } else {
@@ -384,7 +393,7 @@ public class Activity {
         } catch (NullPointerException e) {
             currentSentRequests = new ArrayList<>();
         }
-        if (currentSentRequests!=null && isinlist(currentSentRequests, reciever)){
+        if (currentSentRequests != null && isinlist(currentSentRequests, reciever)) {
             System.out.println("Olete juba saatnud sõbrakutse kasutajale " + reciever);
             return;
         }
@@ -415,7 +424,7 @@ public class Activity {
             recieverFriendRequests = new ArrayList<>();
         }
 
-        if (currentFriendRequests!=null && isinlist(currentFriendRequests, reciever)){
+        if (currentFriendRequests != null && isinlist(currentFriendRequests, reciever)) {
             System.out.println("2");
             int indexInCurrent = indexinlist(currentFriendRequests, reciever);
             currentFriendRequests.remove(indexInCurrent);
@@ -468,29 +477,29 @@ public class Activity {
             String json = mapper.writeValueAsString(recProfile);
 //            System.out.println(json);
             String[] recieverLinkdata = recProfile.getName().split("/");
-            String recieverDatabase = baseLink + "users/" + recieverLinkdata[recieverLinkdata.length-1];
+            String recieverDatabase = baseLink + "users/" + recieverLinkdata[recieverLinkdata.length - 1];
             writetodatabase(json, recieverDatabase);
         } catch (JsonProcessingException e) {
             System.out.println("Ei saanud " + reciever + " andmeid salvestada.");
         }
     }
 
-    public void showfriends(){
+    public void showfriends() {
         try {
             for (UserInformation.Value friendNickname : userProfile.getUserInformation().getFriends().getArrayValue().getValues()) {
                 System.out.println(friendNickname.getStringValue());
             }
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             System.out.println("Teil ei ole sõpru(");
         }
     }
 
-    public String findUser(String userNickname){
-        String allUsers = readfromdatabase(baseLink+"users");
+    public String findUser(String userNickname) {
+        String allUsers = readfromdatabase(baseLink + "users");
         try {
             ObjectMapper mapper = new ObjectMapper();
             Users users = mapper.readValue(allUsers, Users.class);
-            for (UserProfile userProf: users.getUsers()){
+            for (UserProfile userProf : users.getUsers()) {
                 if (userProf.getUserInformation().getUsername().getStringValue().equals(userNickname)) {
                     return mapper.writeValueAsString(userProf);
                 }
@@ -501,7 +510,7 @@ public class Activity {
         }
     }
 
-    private void writetodatabase(String text, String urlString){
+    private void writetodatabase(String text, String urlString) {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(urlString).openConnection();
             connection.setRequestMethod("POST");
@@ -518,7 +527,7 @@ public class Activity {
                 throw new IOException("Server ei anna õiget tagasisidet.");
             }
             connection.disconnect();
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Ei saanud andmeid salvestada.");
         }
     }
@@ -542,22 +551,180 @@ public class Activity {
         }
     }
 
-    private boolean isinlist(List<UserInformation.Value> list, String value){
-        for (UserInformation.Value item: list){
-            if (item.getStringValue().equals(value)){
+    private boolean isinlist(List<UserInformation.Value> list, String value) {
+        for (UserInformation.Value item : list) {
+            if (item.getStringValue().equals(value)) {
                 return true;
             }
         }
         return false;
     }
-    private int indexinlist(List<UserInformation.Value> list, String value){
-        for (int i=0;i<list.size();i++){
-            if (list.get(i).getStringValue().equals(value)){
+
+    private int indexinlist(List<UserInformation.Value> list, String value) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getStringValue().equals(value)) {
                 return i;
             }
         }
         return -1;
     }
 
+    private String getWordleWord() throws IOException {
+        HttpURLConnection connection = new ConnectToCloud().connectToDatabaseDocument("wordle", "curWord");
+        connection.setRequestMethod("GET");
+        InputStream inputStream = connection.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        ObjectMapper mapper = new ObjectMapper();
+        WordleInfo wordleInfo = mapper.readValue(reader, WordleInfo.class);
+        if(LocalDateTime.parse(wordleInfo.getUpdateTime().substring(0,21)).toLocalDate().isBefore(LocalDateTime.now().toLocalDate())){
+            updateWordleWord(wordleInfo);
+        }
+        return wordleInfo.getFields().getWord().getStringValue();
+    }
 
+    private LeaderboardDb getWordleLeaderboard() throws IOException {
+        HttpURLConnection connection = new ConnectToCloud().connectToDatabaseDocument("wordle", "leaderboard");
+        connection.setRequestMethod("GET");
+        InputStream inputStream = connection.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(reader, LeaderboardDb.class);
+    }
+
+    private void updateLeaderboardDb(LeaderboardDb leaderboard) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String currentUserFields = mapper.writeValueAsString(leaderboard.getFields());
+            String requestBody = "{\"fields\": " + currentUserFields + " }";
+            HttpURLConnection connection = (HttpURLConnection) new URL("https://firestore.googleapis.com/v1/" + leaderboard.getName()).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            OutputStream os = connection.getOutputStream();
+            os.write(requestBody.getBytes());
+            os.flush();
+            os.close();
+            int res = connection.getResponseCode();
+
+
+        } catch (Exception e) {
+            System.out.println(e);
+            System.out.println("problem adding you to leaderboard");
+        }
+
+    }
+
+    private void updateWordleWord(WordleInfo wordleInfo) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Random random = new Random();
+            String[] commonFiveLetterWords = {
+                    "apple", "bread", "chair", "dance", "eagle",
+                    "faith", "globe", "house", "image", "jelly",
+                    "knife", "lemon", "mouse", "nurse", "ocean",
+                    "paint", "queen", "river", "stone", "table",
+                    "uncle", "vivid", "wheat", "xenon", "youth",
+                    "zebra", "brave", "cloud", "drink", "earth",
+                    "flame", "grape", "heart", "inbox", "joker",
+                    "kneel", "light", "magic", "north", "organ",
+                    "peace", "quick", "rider", "smile", "torch",
+                    "unify", "voice", "whale", "x-ray", "yield"
+            };
+            wordleInfo.getFields().getWord().setStringValue(commonFiveLetterWords[random.nextInt(commonFiveLetterWords.length)]);
+            String wordleFields = mapper.writeValueAsString(wordleInfo.getFields());
+            String requestBody = "{\"fields\": " + wordleFields + " }";
+            HttpURLConnection connection = (HttpURLConnection) new URL("https://firestore.googleapis.com/v1/" + wordleInfo.getName()).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            OutputStream os = connection.getOutputStream();
+            os.write(requestBody.getBytes());
+            os.flush();
+            os.close();
+            int res = connection.getResponseCode();
+            System.out.println(res);
+
+
+        } catch (Exception e) {
+            System.out.println(e);
+            System.out.println("problem adding you to leaderboard");
+        }
+    }
+
+
+    public void wordle() throws IOException {
+        String ANSI_RESET = "\u001B[0m";
+        String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+        String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
+        String ANSI_RED_BACKGROUND = "\u001B[41m";
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Kas näete ekraanil kolme värvi (jah/ei):");
+
+        System.out.print(ANSI_GREEN_BACKGROUND + " ROHELINE " + ANSI_RESET);
+        System.out.print(ANSI_YELLOW_BACKGROUND + " KOLLANE " + ANSI_RESET);
+        System.out.print(ANSI_RED_BACKGROUND + " PUNANE " + ANSI_RESET);
+        System.out.println();
+        String jahei = scanner.nextLine();
+        if(!jahei.equals("jah")){
+            System.out.println("Kahjuks kasutate konsooli, mis ei toeta värve, ehk mängida ei ole võimalik");
+            return;
+        }
+
+
+
+        String answer = getWordleWord();
+        char[] vastus = answer.toUpperCase().toCharArray();
+
+        String seni = "";
+        String rida = "";
+        int tulemus = -1;
+
+        System.out.println("Wordle on nuputamismäng, kus tuleb ära arvata ette määratud sõna. Selleks tuleb teha pakkumine ");
+        System.out.println("ja ekraanile ilmuvad värvid näitavad, millised tähed on õiges kohas (roheline), millised on vale koha peal (kollane) ja milliseid sõnas üldse ei ole (punane).");
+        System.out.println("Kokku on 5 katset ja arvatav sõna vahetub iga päev.");
+        LeaderboardDb leaderboard = getWordleLeaderboard();
+
+        for (int j = 0; j < 5; j++) {
+            System.out.println("Pakkumine " + (j + 1) + ":");
+            String pakkumine = scanner.nextLine().toUpperCase();
+            if (pakkumine.length() > 5) {
+                System.out.println("Sõna liiga pikk!");
+                j--;
+            } else if (pakkumine.length() < 5) {
+                System.out.println("Sõna liiga lühike!");
+                j--;
+            } else {
+                for (int i = 0; i < pakkumine.length(); i++) {
+                    char taht = pakkumine.toUpperCase().toCharArray()[i];
+                    if (taht == vastus[i]) {
+                        rida = ANSI_GREEN_BACKGROUND + " " + taht + " " + ANSI_RESET;
+                    } else if (contains(taht, vastus)) {
+                        rida = ANSI_YELLOW_BACKGROUND + " " + taht + " " + ANSI_RESET;
+                    } else {
+                        rida = ANSI_RED_BACKGROUND + " " + taht + " " + ANSI_RESET;
+                    }
+                    seni += rida;
+                }
+                seni += "\n";
+                System.out.println(seni);
+                if (pakkumine.equalsIgnoreCase(answer)) {
+                    tulemus = j;
+                    break;
+                }
+            }
+            System.out.println();
+        }
+
+        String kasutajaTulemus = (getUserNickname() + "                      ").substring(0, 22) + " " + (tulemus == -1 ? " " : tulemus + 1);
+        leaderboard.getFields().getLeaderboard().getArrayValue().addLeaderboardEntry(kasutajaTulemus);
+        System.out.println("Sõna oli " + answer.toUpperCase() + "!");
+        System.out.println("Vaata oma tulemust edetabelist:");
+        System.out.println();
+        System.out.println(leaderboard);
+
+
+    }
 }

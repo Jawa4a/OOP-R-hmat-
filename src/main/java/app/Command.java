@@ -185,6 +185,18 @@ class ShowFriends implements Command{
     }
 }
 
+// Wordle mäng
+class Wordle implements Command {
+    Activity activity;
+    public Wordle(Activity activity) {
+        this.activity = activity;
+    }
+    @Override
+    public void execute(String[] args) throws IOException {
+        this.activity.wordle();
+    }
+}
+
 
 
 
