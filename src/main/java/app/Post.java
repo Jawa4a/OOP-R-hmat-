@@ -1,5 +1,6 @@
 package app;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ class Post {
     }
 
     public void addComment(String userName, String commentText) {
-        Comment.addCommentToList(this.comments, userName, commentText);
+        this.fields.getComments().addComment(userName+"×"+commentText+"×"+LocalDateTime.now().toLocalDate()+":"+LocalDateTime.now().toLocalTime());
     }
 
     public List<Comment> getComments() {

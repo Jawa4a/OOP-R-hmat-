@@ -2,7 +2,7 @@ package app;
 
 import java.io.IOException;
 
-interface Command {
+interface   Command {
     void execute(String[] args) throws IOException;
 }
 // Help, tagastab millised käsud on saadavad.

@@ -27,7 +27,7 @@ public class Activity {
         this.projectID = "obje-8d9a1";
         this.userInfo = userInfo;
         this.userProfile = getUserProfileData(userInfo.email);
-
+        this.autor = userInfo.getDisplayName();
         this.baseLink = "https://firestore.googleapis.com/v1/projects/" + this.projectID + "/databases/(default)/documents/";
     }
 
@@ -91,6 +91,11 @@ public class Activity {
     public void showPosts(int nihe) throws IOException {
         algus += nihe;
         lopp += nihe;
+
+        if(algus < 0){
+            System.out.println("That was the newest post!");
+            return;
+        }
         for (int i = algus; i < lopp; i++) {
             if(i >= posts.length){
                 System.out.println("No more posts to show. Use  \"top\" to return to first post.");
@@ -189,6 +194,7 @@ public class Activity {
             outputStream.write(input, 0, input.length);
         }
 
+        /*
         // Debugging response
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
         StringBuilder response = new StringBuilder();
@@ -196,8 +202,7 @@ public class Activity {
         while ((line = reader.readLine()) != null) {
             response.append(line);
         }
-
-
+        */
     }
 
     public UserDbEntry getUserData(String userEmail) throws IOException {
@@ -299,13 +304,13 @@ public class Activity {
         } else {
             System.out.println("Comments:");
             for (Fields.ArrayValue.Value comment : comments) {
-                System.out.println(comment.getStringValue());
                 String[] commentString = comment.getStringValue().split("×");
                 System.out.println("---------------------------");
                 System.out.println(commentString[0]);
+                System.out.println(commentString[2]);
+                System.out.println();
                 System.out.println(commentString[1]);
                 System.out.println();
-                System.out.println(commentString[2]);
                 System.out.println("---------------------------");
             }
         }
@@ -444,18 +449,6 @@ public class Activity {
                 recieverFriendRequests = Arrays.asList(currentNickname);
             }
         }
-/*        UserInformation.Value a = new UserInformation.Value();
-        a.setStringValue("A");
-        UserInformation.Value b = new UserInformation.Value();
-        b.setStringValue("B");
-        UserInformation.Value c = new UserInformation.Value();
-        c.setStringValue("C");
-        currentFriends = List.of(a);
-        currentFriendRequests = List.of(b);
-        currentSentRequests = List.of(c);
-        recieverFriendRequests = List.of(a);
-        recieverSentRequests = List.of(b);
-        recieverFriends = List.of(c);*/
 
         userProfile.getUserInformation().getFriends().getArrayValue().setValues(currentFriends);
         userProfile.getUserInformation().getFriendrequests().getArrayValue().setValues(currentFriendRequests);
