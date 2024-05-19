@@ -91,11 +91,6 @@ public class Activity {
     public void showPosts(int nihe) throws IOException {
         algus += nihe;
         lopp += nihe;
-
-        if(algus < 0){
-            System.out.println("That was the newest post!");
-            return;
-        }
         for (int i = algus; i < lopp; i++) {
             if(i >= posts.length){
                 System.out.println("No more posts to show. Use  \"top\" to return to first post.");
