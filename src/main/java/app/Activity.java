@@ -29,6 +29,7 @@ public class Activity {
         this.projectID = "obje-8d9a1";
         this.userInfo = userInfo;
         this.userProfile = getUserProfileData(userInfo.email);
+        this.autor = userInfo.getDisplayName();
     }
 
     public void setautor(String autor) {
@@ -92,8 +93,14 @@ public class Activity {
             System.out.println("No more posts to show. Use  \"top\" to return to first post.");
             return;
         }
+
         algus += nihe;
         lopp += nihe;
+
+        if(algus < 0){
+            System.out.println("That was the newest post!");
+            return;
+        }
         for (int i = algus; i < lopp; i++) {
             Post post = posts[i];
             System.out.println("");
@@ -184,6 +191,7 @@ public class Activity {
             outputStream.write(input, 0, input.length);
         }
 
+        /*
         // Debugging response
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
         StringBuilder response = new StringBuilder();
@@ -191,6 +199,8 @@ public class Activity {
         while ((line = reader.readLine()) != null) {
             response.append(line);
         }
+        */
+
 
 
     }
@@ -307,13 +317,13 @@ public class Activity {
         } else {
             System.out.println("Comments:");
             for (Fields.ArrayValue.Value comment : comments) {
-                System.out.println(comment.getStringValue());
                 String[] commentString = comment.getStringValue().split("×");
                 System.out.println("---------------------------");
                 System.out.println(commentString[0]);
+                System.out.println(commentString[2]);
+                System.out.println();
                 System.out.println(commentString[1]);
                 System.out.println();
-                System.out.println(commentString[2]);
                 System.out.println("---------------------------");
             }
         }

@@ -3,6 +3,7 @@ package app;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class Fields {
@@ -121,7 +122,7 @@ class Fields {
     }
 
     static class ArrayValue {
-        private List<Value> values;
+        private List<Value> values = new ArrayList<>();
 
         public void addValue(String value) {
             values.add(new Value(value));

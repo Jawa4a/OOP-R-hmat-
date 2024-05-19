@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDbEntryFields {
@@ -15,6 +16,18 @@ public class UserDbEntryFields {
 
     @JsonProperty("subscriptions")
     private UserInformation.Subscriptions subscriptions;
+
+    @JsonProperty("sentrequests")
+    private UserInformation.Sentrequests sentrequests;
+
+    @JsonProperty("friendrequests")
+    private UserInformation.FriendRequests friendrequests;
+
+    @JsonProperty("friends")
+    private UserInformation.Friends friends;
+
+    @JsonProperty("username")
+    private UserInformation.Username username;
 
 
     // Getters and Setters
@@ -86,9 +99,11 @@ public class UserDbEntryFields {
     }
 
     static class ArrayValue {
-        private List<Value> values;
+        private List<Value> values = new ArrayList<>();
 
         public boolean checkIfPostIsLiked(String postName) {
+
+
 
             for (Value v : values) {
                 if (postName.equals(v.stringValue)) {
